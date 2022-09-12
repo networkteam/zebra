@@ -6,6 +6,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/networkteam/zebra"
+  },
   "type": "module",
   "main": "dist/zebra.umd.js",
   "module": "./dist/zebra.es.js",
