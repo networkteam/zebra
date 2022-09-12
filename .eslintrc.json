@@ -1,0 +1,10 @@
+{
+  "plugins": ["simple-import-sort"],
+  "extends": ["plugin:prettier/recommended"],
+  "rules": {
+    "react/no-unescaped-entities": "off",
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
+    "prettier/prettier": "warn"
+  }
+}
