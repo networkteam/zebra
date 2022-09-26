@@ -18,6 +18,8 @@ jobs:
       - run: git config --global user.name "GitHub CD bot"
       - run: git config --global user.email "info@networkteam.com"
       - run: npm version prerelease --preid=${{ steps.vars.outputs.sha_short }}
+      - run: yarn install
+      - run: yarn build
       - run: npm publish --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
