@@ -11,8 +11,8 @@
     "url": "https://github.com/networkteam/zebra"
   },
   "type": "module",
-  "main": "dist/zebra.umd.js",
-  "module": "./dist/zebra.es.js",
+  "main": "dist/zebra.umd.cjs",
+  "module": "./dist/zebra.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "vite build --watch",
@@ -48,8 +48,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/zebra.es.js",
-      "require": "./dist/zebra.umd.js"
+      "import": "./dist/zebra.js",
+      "require": "./dist/zebra.umd.cjs"
     }
   }
 }

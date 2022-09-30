@@ -12,6 +12,7 @@ export {
   loadServerSideDocumentProps,
   loadServerSideNodeProps,
   convertApiUrlToPath,
+  withZebra
 } from './utils/helper';
 
 export { useNode, useDocumentNode, useSiteNode, useMeta, useInBackend } from './utils/hooks';

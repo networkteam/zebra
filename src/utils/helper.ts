@@ -1,5 +1,5 @@
 import log from 'loglevel';
-import { GetServerSidePropsContext, GetStaticPropsContext } from 'next';
+import { GetServerSidePropsContext, GetStaticPropsContext, NextConfig } from 'next';
 
 import { ApiErrors, BackendProps, DocumentsResponse, NeosContentNode, NeosData } from '../types';
 
@@ -176,4 +176,34 @@ export const injectNeosBackendMetadata = (node: NeosContentNode, backend: Backen
 
   // TODO Check if we can do it differently
   document.body.classList.add('neos-backend');
+};
+
+export const withZebra = (nextConfig: NextConfig): NextConfig => {
+  return {
+    ...nextConfig,
+    rewrites: async () => {
+      const neosRewrites = [
+        {
+          source: '/neos/:path*',
+          destination: process.env.NEOS_BASE_URL + '/neos/:path*',
+        },
+        {
+          source: '/_Resources/:path*',
+          destination: process.env.NEOS_BASE_URL + '/_Resources/:path*',
+        },
+      ];
+
+      const rewrites = await nextConfig.rewrites?.();
+
+      if (!rewrites) {
+        return neosRewrites
+      }
+      if (Array.isArray(rewrites)) {
+        return rewrites.concat(neosRewrites)
+      }
+
+      rewrites.afterFiles = rewrites.afterFiles.concat(neosRewrites)
+      return rewrites
+    },
+  };
 };

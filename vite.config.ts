@@ -16,7 +16,6 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'Zebra',
       formats: ['es', 'umd'],
-      fileName: (format) => `zebra.${format}.js`,
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'next'],
