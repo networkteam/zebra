@@ -21,6 +21,7 @@ export default function Editable({ as = 'div', property, ...rest }: EditableProp
       })}
       data-__neos-property={inBackend ? property : undefined}
       data-__neos-editable-node-contextpath={inBackend ? contextPath : undefined}
+      data-__neos-node-contextpath={inBackend ? contextPath : undefined}
       property={inBackend ? 'typo3:' + property : undefined}
       data-neos-node-type={inBackend ? nodeType : undefined}
       contentEditable={inBackend ? true : undefined}
