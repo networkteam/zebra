@@ -8,8 +8,6 @@ export default function MissingNodeType({ node }: { node: NeosContentNode }) {
     border: '1px dashed #F97316',
   };
 
-  console.log(node)
-
   return (
     <div style={styles}>
       Missing <strong>{node.nodeType}</strong> in ContentRegistry

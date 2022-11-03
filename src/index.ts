@@ -12,10 +12,18 @@ export {
   loadServerSideDocumentProps,
   loadServerSideNodeProps,
   convertApiUrlToPath,
-  withZebra
+  withZebra,
 } from './utils/helper';
 
-export { useNode, useDocumentNode, useSiteNode, useMeta, useInBackend } from './utils/hooks';
+export {
+  useNode,
+  useDocumentNode,
+  useSiteNode,
+  useMeta,
+  useInBackend,
+  useContentCollection,
+  useContentComponent,
+} from './utils/hooks';
 
 export { default as Preview } from './lib/pages/Preview';
 export { default as Frontend } from './lib/pages/Frontend';
