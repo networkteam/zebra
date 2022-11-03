@@ -1,4 +1,4 @@
-import { useInBackend, useNode } from '../../utils/hooks';
+import { useContentComponent } from '../../utils/hooks';
 
 type ContentComponentProps = {
   as?: keyof JSX.IntrinsicElements;
@@ -7,17 +7,11 @@ type ContentComponentProps = {
 };
 
 export default function ContentComponent({ as = 'div', children, ...rest }: ContentComponentProps) {
-  const { contextPath } = useNode();
-  const inBackend = useInBackend();
+  const componentProps = useContentComponent();
   const Component = as;
 
   return (
-    <Component
-      data-__neos-node-contextpath={inBackend ? contextPath : undefined}
-      // Use a fixed fusion path to render an out-of-band preview of this node
-      data-__neos-fusion-path={inBackend ? 'neosNext/previewNode' : undefined}
-      {...rest}
-    >
+    <Component {...componentProps} {...rest}>
       {children}
     </Component>
   );
