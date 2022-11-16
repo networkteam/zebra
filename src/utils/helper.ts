@@ -45,6 +45,22 @@ export const loadStaticProps = async ({ params }: GetStaticPropsContext) => {
   // TODO Split to separate functions
   const startTime = Date.now();
   const response = await fetch(apiUrl + '/neos/content-api/document?path=' + encodeURIComponent(path));
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      log.debug('content API returned 404 for path', path);
+
+      return {
+        notFound: true,
+      };
+    }
+
+    const data: ApiErrors = await response.json();
+    if (data.errors) {
+      throw new Error('Content API responded with error: ' + data.errors.map((e) => e.message).join(', '));
+    }
+  }
+
   const data: NeosData = await response.json();
   const endTime = Date.now();
   log.debug('fetched data from content API for path', path, ', took', `${endTime - startTime}ms`);
@@ -72,6 +88,14 @@ export const loadServerSideDocumentProps = async ({ query, req }: GetServerSideP
   });
 
   if (!response.ok) {
+    if (response.status === 404) {
+      log.debug('content API returned 404 for context path', contextPath);
+
+      return {
+        notFound: true,
+      };
+    }
+
     const data: ApiErrors = await response.json();
     if (data.errors) {
       throw new Error('Content API responded with error: ' + data.errors.map((e) => e.message).join(', '));
