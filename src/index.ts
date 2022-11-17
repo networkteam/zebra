@@ -6,7 +6,6 @@ export { default as NeosContext } from './utils/context';
 
 export {
   injectNeosBackendMetadata,
-  nodeMetadata,
   loadStaticPaths,
   loadStaticProps,
   loadServerSideDocumentProps,

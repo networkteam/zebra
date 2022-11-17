@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { NeosContentNode, NeosContextProps } from '../types';
 import NeosContext from './context';
@@ -29,8 +29,17 @@ export const useInBackend = () => {
 };
 
 export const useContentComponent = () => {
-  const { contextPath } = useNode();
+  const { contextPath, backend } = useNode();
   const inBackend = useInBackend();
+
+  useEffect(() => {
+    if (!inBackend) return;
+
+    (window as any)['@Neos.Neos.Ui:Nodes'] = {
+      ...(window as any)['@Neos.Neos.Ui:Nodes'],
+      [contextPath]: backend?.serializedNode,
+    };
+  }, []);
 
   return {
     'data-__neos-node-contextpath': inBackend ? contextPath : undefined,
@@ -60,6 +69,15 @@ export const useContentCollection = (nodeName?: string) => {
       collectionProps: {},
     };
   }
+
+  useEffect(() => {
+    if (!collectionNode || !inBackend) return;
+
+    (window as any)['@Neos.Neos.Ui:Nodes'] = {
+      ...(window as any)['@Neos.Neos.Ui:Nodes'],
+      [collectionNode.contextPath]: collectionNode.backend?.serializedNode,
+    };
+  }, [collectionNode]);
 
   return {
     collectionNode,

@@ -170,20 +170,9 @@ export const routePathToSlug = (routePath: string): string[] => {
   return routePath.split('/');
 };
 
-export const nodeMetadata = (node: NeosContentNode) => {
-  const metadata: Record<string, any> = {};
-  const addMetadata = (node: NeosContentNode) => {
-    metadata[node.contextPath] = node.backend?.serializedNode;
-    node.children?.forEach((child) => addMetadata(child));
-  };
-  addMetadata(node);
-  return metadata;
-};
-
 // Use useEffect to prevent errors with Rehydration to set Neos metadata
 export const injectNeosBackendMetadata = (node: NeosContentNode, backend: BackendProps | undefined) => {
   (window as any)['@Neos.Neos.Ui:DocumentInformation'] = backend?.documentInformation;
-  (window as any)['@Neos.Neos.Ui:Nodes'] = nodeMetadata(node);
 
   if (!document.getElementById('_neos-ui-css')) {
     const hostCss = document.createElement('link');
