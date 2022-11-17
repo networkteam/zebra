@@ -1,11 +1,11 @@
 import log from 'loglevel';
-import { GetServerSidePropsContext, GetStaticPropsContext, NextConfig } from 'next';
+import { GetServerSidePropsContext, GetStaticPathsContext, GetStaticPropsContext, NextConfig } from 'next';
 
 import { ApiErrors, BackendProps, DocumentsResponse, NeosContentNode, NeosData } from '../types';
 
 log.setDefaultLevel(log.levels.DEBUG);
 
-export const loadStaticPaths = async () => {
+export const loadStaticPaths = async ({ locales, defaultLocale }: GetStaticPathsContext) => {
   const apiUrl = process.env.NEOS_BASE_URL;
   if (!apiUrl) {
     throw new Error('Missing NEOS_BASE_URL environment variable');
@@ -13,36 +13,59 @@ export const loadStaticPaths = async () => {
 
   const startTime = Date.now();
   const response = await fetch(apiUrl + '/neos/content-api/documents');
+
+  if (!response.ok) {
+    const data: ApiErrors = await response.json();
+    if (data.errors) {
+      throw new Error('Content API responded with error: ' + data.errors.map((e) => e.message).join(', '));
+    }
+  }
+
   const data: DocumentsResponse = await response.json();
   const endTime = Date.now();
   log.debug('fetched documents from content API, took', `${endTime - startTime}ms`);
 
+  const nonDefaultLocales = locales?.filter((locale) => locale !== defaultLocale) ?? [];
   const paths = data.documents.map((document) => {
     if (document.routePath === '/') {
       return { params: { slug: [''] } };
     }
 
-    const slug = convertApiUrlToPath(document.routePath);
+    const { slug, locale } = (() => {
+      const s = routePathToSlug(document.routePath);
 
-    return { params: { slug } };
+      if (nonDefaultLocales.includes(s[0])) {
+        return {
+          slug: s.slice(1).length > 0 ? s.slice(1) : [''],
+          locale: s[0],
+        };
+      }
+
+      return {
+        slug: s,
+        locale: defaultLocale,
+      };
+    })();
+
+    return { params: { slug, document }, locale };
   });
 
   return paths;
 };
 
-export const loadStaticProps = async ({ params }: GetStaticPropsContext) => {
+export const loadStaticProps = async ({ params, locale, defaultLocale }: GetStaticPropsContext) => {
   const apiUrl = process.env.NEOS_BASE_URL;
   if (!apiUrl) {
     throw new Error('Missing NEOS_BASE_URL environment variable');
   }
 
   if (!params) {
-    return null;
+    return undefined;
   }
 
-  const path = '/' + (params?.slug && Array.isArray(params.slug) ? params.slug.join('/') : '');
+  const localePrefix = locale && locale !== defaultLocale ? locale + '/' : '';
+  const path = '/' + localePrefix + (params?.slug && Array.isArray(params.slug) ? params.slug.join('/') : '');
 
-  // TODO Split to separate functions
   const startTime = Date.now();
   const response = await fetch(apiUrl + '/neos/content-api/document?path=' + encodeURIComponent(path));
 
@@ -50,9 +73,7 @@ export const loadStaticProps = async ({ params }: GetStaticPropsContext) => {
     if (response.status === 404) {
       log.debug('content API returned 404 for path', path);
 
-      return {
-        notFound: true,
-      };
+      return undefined;
     }
 
     const data: ApiErrors = await response.json();
@@ -142,12 +163,11 @@ export const loadServerSideNodeProps = async ({ query, req }: GetServerSideProps
   return data;
 };
 
-// converts a url string to array of paths
-export const convertApiUrlToPath = (apiUrl: string): string[] => {
-  if (apiUrl.startsWith('/')) {
-    apiUrl = apiUrl.substring(1);
+export const routePathToSlug = (routePath: string): string[] => {
+  if (routePath.startsWith('/')) {
+    routePath = routePath.substring(1);
   }
-  return apiUrl.split('/');
+  return routePath.split('/');
 };
 
 export const nodeMetadata = (node: NeosContentNode) => {
@@ -220,14 +240,14 @@ export const withZebra = (nextConfig: NextConfig): NextConfig => {
       const rewrites = await nextConfig.rewrites?.();
 
       if (!rewrites) {
-        return neosRewrites
+        return neosRewrites;
       }
       if (Array.isArray(rewrites)) {
-        return rewrites.concat(neosRewrites)
+        return rewrites.concat(neosRewrites);
       }
 
-      rewrites.afterFiles = rewrites.afterFiles.concat(neosRewrites)
-      return rewrites
+      rewrites.afterFiles = rewrites.afterFiles.concat(neosRewrites);
+      return rewrites;
     },
   };
 };

@@ -11,7 +11,7 @@ export {
   loadStaticProps,
   loadServerSideDocumentProps,
   loadServerSideNodeProps,
-  convertApiUrlToPath,
+  routePathToSlug,
   withZebra,
 } from './utils/helper';
 
