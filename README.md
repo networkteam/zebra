@@ -19,7 +19,7 @@ TODO Publish demo project ;)
 
 ## How does it work?
 
-This package is used inside a Next.js project that uses Neos CMS for rendering of content and editing with full preview capabilities.
+This package is used inside a Next.js project that uses Neos CMS for rendering of content and editing with full preview capabilities. It provides components and hooks to handle the rendering of nodes and adding editing metadata for the Neos UI.
 
 Inside Neos CMS a few supporting packages are used to provide the necessary data for the frontend and change the behavior of the Neos UI:
 
@@ -27,16 +27,17 @@ Inside Neos CMS a few supporting packages are used to provide the necessary data
 * [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) for integrating Next.js for preview of nodes and handle revalidation of generated content on publishing
 
 ### Static site generation
+<details>
+  <summary>This is how the public view of the Next.js site is generated from content in Neos.</summary>
 
-This is used for the public view of the Next.js site.
+  Your Next.js project defines a [dynamic catch all route](https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes) that will generate pages for document nodes in Neos CMS. The route is defined in `pages/[[...slug]].tsx`.
 
-Your Next.js project defines a [dynamic catch all route](https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes) that will generate pages for document nodes in Neos CMS. The route is defined in `pages/[[...slug]].tsx`.
+  Next.js will fetch a list of all document nodes from Neos via the Content API in `getStaticProps` for the `[[...slug]]` route.
 
-Next.js will fetch a list of all document nodes from Neos via the Content API in `getStaticProps` for the `[[...slug]]` route.
-
-The `getStaticProps` function will then be called for each page with the `path` and `locale` as params.
-The data for the page will be fetched via the Content API in Neos by the path and locale.
-This data is the input for rendering the page, so the response of the Content API needs to contain all needed information like menu items, shared content in e.g. a footer and the content of the page itself.
+  The `getStaticProps` function will then be called for each page with the `path` and `locale` as params.
+  The data for the page will be fetched via the Content API in Neos by the path and locale.
+  This data is the input for rendering the page, so the response of the Content API needs to contain all needed information like menu items, shared content in e.g. a footer and the content of the page itself.
+</details>
 
 ### Content editing in Neos UI
 
@@ -58,7 +59,7 @@ TODO Write about development setup of a Neos / Next project
 
 TODO Write about deployment of a Neos / Next project
 
-## Release a new version:
+## Release a new version
 
 ### Pre-releases
 
@@ -72,3 +73,7 @@ Use `@next` as version in your project package.json to use the current pre-relea
 3. Push bumped version including new tag to `main` branch with `git push --tags`
 4. Create a new release with release notes from newly created tag on github
 5. The new release will trigger GitHub Actions that will publish to NPM
+
+## License
+
+[MIT](./LICENSE.md)
