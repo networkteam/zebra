@@ -2,6 +2,62 @@
 
 🦓
 
+## Why?
+
+* Neos is a great CMS with flexible content structures and focus on a streamlined editing experience
+* Next.js offers a great developer experience and a way to build modern websites and applications with a mixed form of static and dynamic pages
+
+So why not combine the best of both worlds?
+
+Our question was: Can we retain the editing experience of Neos while using Next.js for the frontend? And the answer is: Yes, we can!
+
+## Installation
+
+See our demo project for a working example.
+
+TODO Publish demo project ;)
+
+## How does it work?
+
+This package is used inside a Next.js project that uses Neos CMS for rendering of content and editing with full preview capabilities.
+
+Inside Neos CMS a few supporting packages are used to provide the necessary data for the frontend and change the behavior of the Neos UI:
+
+* [Networkteam.Neos.ContentApi](https://github.com/networkteam/Networkteam.Neos.ContentApi) for providing the content via a JSON API
+* [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) for integrating Next.js for preview of nodes and handle revalidation of generated content on publishing
+
+### Static site generation
+
+This is used for the public view of the Next.js site.
+
+Your Next.js project defines a [dynamic catch all route](https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes) that will generate pages for document nodes in Neos CMS. The route is defined in `pages/[[...slug]].tsx`.
+
+Next.js will fetch a list of all document nodes from Neos via the Content API in `getStaticProps` for the `[[...slug]]` route.
+
+The `getStaticProps` function will then be called for each page with the `path` and `locale` as params.
+The data for the page will be fetched via the Content API in Neos by the path and locale.
+This data is the input for rendering the page, so the response of the Content API needs to contain all needed information like menu items, shared content in e.g. a footer and the content of the page itself.
+
+### Content editing in Neos UI
+
+TODO Describe how the Neos UI is integrated
+
+### Revalidation
+
+TODO Describe how revalidation on publishing works
+
+### Preview of a single node (out of band rendering)
+
+TODO Describe how preview of a single node works
+
+## Development
+
+TODO Write about development setup of a Neos / Next project
+
+## Deployment
+
+TODO Write about deployment of a Neos / Next project
+
 ## Release a new version:
 
 ### Pre-releases
