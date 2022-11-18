@@ -12,12 +12,15 @@ export const loadStaticPaths = async ({ locales, defaultLocale }: GetStaticPaths
   }
 
   const startTime = Date.now();
-  const response = await fetch(apiUrl + '/neos/content-api/documents');
+  const fetchUrl = apiUrl + '/neos/content-api/documents';
+  const response = await fetch(fetchUrl);
 
   if (!response.ok) {
     const data: ApiErrors = await response.json();
     if (data.errors) {
-      throw new Error('Content API responded with error: ' + data.errors.map((e) => e.message).join(', '));
+      const flatErrors = data.errors.map((e) => e.message).join(', ');
+      log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
+      throw new Error('Content API responded with error: ' + flatErrors);
     }
   }
 
@@ -67,7 +70,8 @@ export const loadStaticProps = async ({ params, locale, defaultLocale }: GetStat
   const path = '/' + localePrefix + (params?.slug && Array.isArray(params.slug) ? params.slug.join('/') : '');
 
   const startTime = Date.now();
-  const response = await fetch(apiUrl + '/neos/content-api/document?path=' + encodeURIComponent(path));
+  const fetchUrl = apiUrl + '/neos/content-api/document?path=' + encodeURIComponent(path);
+  const response = await fetch(fetchUrl);
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -78,7 +82,9 @@ export const loadStaticProps = async ({ params, locale, defaultLocale }: GetStat
 
     const data: ApiErrors = await response.json();
     if (data.errors) {
-      throw new Error('Content API responded with error: ' + data.errors.map((e) => e.message).join(', '));
+      const flatErrors = data.errors.map((e) => e.message).join(', ');
+      log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
+      throw new Error('Content API responded with error: ' + flatErrors);
     }
   }
 
@@ -101,7 +107,8 @@ export const loadServerSideDocumentProps = async ({ query, req }: GetServerSideP
   }
 
   const startTime = Date.now();
-  const response = await fetch(apiUrl + '/neos/content-api/document?contextPath=' + encodeURIComponent(contextPath), {
+  const fetchUrl = apiUrl + '/neos/content-api/document?contextPath=' + encodeURIComponent(contextPath);
+  const response = await fetch(fetchUrl, {
     headers: {
       // Pass the cookie to content API to forward the Neos session
       Cookie: req.headers.cookie ?? '',
@@ -119,7 +126,9 @@ export const loadServerSideDocumentProps = async ({ query, req }: GetServerSideP
 
     const data: ApiErrors = await response.json();
     if (data.errors) {
-      throw new Error('Content API responded with error: ' + data.errors.map((e) => e.message).join(', '));
+      const flatErrors = data.errors.map((e) => e.message).join(', ');
+      log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
+      throw new Error('Content API responded with error: ' + flatErrors);
     }
   }
 
@@ -142,7 +151,8 @@ export const loadServerSideNodeProps = async ({ query, req }: GetServerSideProps
   }
 
   const startTime = Date.now();
-  const response = await fetch(apiUrl + '/neos/content-api/node?contextPath=' + encodeURIComponent(contextPath), {
+  const fetchUrl = apiUrl + '/neos/content-api/node?contextPath=' + encodeURIComponent(contextPath);
+  const response = await fetch(fetchUrl, {
     headers: {
       // Pass the cookie to content API to forward the Neos session
       Cookie: req.headers.cookie ?? '',
@@ -152,7 +162,9 @@ export const loadServerSideNodeProps = async ({ query, req }: GetServerSideProps
   if (!response.ok) {
     const data: ApiErrors = await response.json();
     if (data.errors) {
-      throw new Error('Content API responded with error: ' + data.errors.map((e) => e.message).join(', '));
+      const flatErrors = data.errors.map((e) => e.message).join(', ');
+      log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
+      throw new Error('Content API responded with error: ' + flatErrors);
     }
   }
 
