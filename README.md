@@ -17,6 +17,12 @@ See our demo project for a working example.
 
 TODO Publish demo project ;)
 
+## Configuration
+
+### Environment variables
+
+* `NEOS_BASE_URL`: The base URL of your Neos installation
+
 ## How does it work?
 
 This package is used inside a Next.js project that uses Neos CMS for rendering of content and editing with full preview capabilities. It provides components and hooks to handle the rendering of nodes and adding editing metadata for the Neos UI.
@@ -27,6 +33,7 @@ Inside Neos CMS a few supporting packages are used to provide the necessary data
 * [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) for integrating Next.js for preview of nodes and handle revalidation of generated content on publishing
 
 ### Static site generation
+
 <details>
   <summary>This is how the public view of the Next.js site is generated from content in Neos.</summary>
 
@@ -37,19 +44,51 @@ Inside Neos CMS a few supporting packages are used to provide the necessary data
   The `getStaticProps` function will then be called for each page with the `path` and `locale` as params.
   The data for the page will be fetched via the Content API in Neos by the path and locale.
   This data is the input for rendering the page, so the response of the Content API needs to contain all needed information like menu items, shared content in e.g. a footer and the content of the page itself.
+
+  For this to work, the Neos base URL has to be known to Next.js via the `NEOS_BASE_URL` environment variable.
 </details>
 
 ### Content editing in Neos UI
 
-TODO Describe how the Neos UI is integrated
+<details>
+  <summary>This is how we the the Next.js frontend is used inside the Neos UI content module with full preview and editing capabilities.</summary>
+
+  Now it get's a little trickier:
+
+  You always access Neos CMS via your Next.js site by appending `/neos`, as usual.
+  The `withZebra` config helper adds the necessary rewrites to the Next.js configuration in `next.config.js` to make this work.
+  Next.js serves a custom `/neos/preview` route that is used to render the preview of a workspace version of a document node.
+  It forwards your Neos session cookie to the Neos backend and fetches the content via the Content API - now with access to the user workspace and much more metadata for use in Neos UI.
+
+  This is not done statically - as it would not allow to access the current request and user session - but on demand via `getServerSideProps`.
+
+  By using the Zebra components and hooks for rendering, all the metadata for the Neos UI is added to the page. Inline editing should just work.
+
+  All other requests to `/neos/*` (except `/neos/previewNode`) are proxied to the Neos backend.
+</details>
 
 ### Revalidation
 
-TODO Describe how revalidation on publishing works
+<details>
+  <summary>This is how incremental static regeneration (ISR) is used if content changes are published in Neos.</summary>
+
+  This is done by the [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) package in Neos. It hooks into the publishing signals, collects changed nodes and their closest document nodes and triggers a revalidation of the pages via a Next.js API route (defaults to `/api/revalidate`). A revalidate token is used to prevent unauthorized revalidation requests.
+
+  For this to work, the Next.js base URL has to be known inside Neos.
+</details>
 
 ### Preview of a single node (out of band rendering)
 
-TODO Describe how preview of a single node works
+<details>
+  <summary>A special case for previewing the content of a single node for inserting and updating content in Neos UI.</summary>
+
+  We use the Next.js frontend again for previewing the content of a single node.
+  To override the default behavior which uses Fusion inside a controller in Neos,
+  the [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next)
+  package provides a Fusion prototype that renders the content of a node via the Next.js frontend. A single Fusion path is used by Zebra in the metadata for all nodes to use this special preview implementation.
+
+  For this to work, the Next.js base URL has to be known inside Neos.
+</details>
 
 ## Development
 
