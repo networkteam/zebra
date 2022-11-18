@@ -11,6 +11,14 @@ So why not combine the best of both worlds?
 
 Our question was: Can we retain the editing experience of Neos while using Next.js for the frontend? And the answer is: Yes, we can!
 
+## Features
+
+* No frontend rendering in Neos CMS - it's used headless, besides providing the Neos UI
+* Use React components for rendering the frontend based on content (node properties) from Neos - your own components with a few helpers and hooks for editing
+* Full editing and preview capabilities in the Neos UI using the frontend generated via Next.js
+* Use multi-language sites with Neos and Next.js
+* Supports multi-site setups (single Neos with sites, multiple Next.js instances)
+
 ## Installation
 
 See our demo project for a working example.
@@ -22,6 +30,119 @@ TODO Publish demo project ;)
 ### Environment variables
 
 * `NEOS_BASE_URL`: The base URL of your Neos installation
+
+## Rendering content
+
+Zebra provides a `Frontend` component to render a document from Neos.
+You provide a mapping from node types to React components.
+It is good practice to split components in *presentational* (no knowledge about Neos) and *integrational* components (adds Zebra components and hooks for editing capabilities on top of *presentational* components).
+
+### Example
+
+Define node type mappings:
+
+```tsx
+import DocumentPage from '../components/document/Page';
+import ContentHeadline from '../components/content/Headline';
+
+export const nodeTypes = {
+  // Documents
+  'MyProject.Site:Document.Page': DocumentPage,
+
+  // Content
+  'Neos.NodeTypes:Headline': ContentHeadline,
+};
+```
+
+Component for a basic document page:
+
+```tsx
+import {
+  ContentCollection,
+  ContentComponent,
+  NeosContentNode,
+  NeosContext,
+  useMeta,
+  useSiteNode,
+} from '@networkteam/zebra';
+import { useContext } from 'react';
+
+import Header from './partials/Header';
+
+const DocumentPage = () => {
+  const meta = useMeta();
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header
+        mainNavigation={meta?.mainNavigation}
+      />
+
+      <main className="flex grow flex-col justify-between">
+        <ContentCollection className="grow" nodeName="main" />
+      </main>
+    </div>
+  );
+};
+
+export default DocumentPage;
+```
+
+Presentational component for a headline:
+
+```tsx
+import classNames from 'classnames';
+
+type HeadlineProps = {
+  children: React.ReactNode;
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  size?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  className?: string;
+};
+
+const Headline = ({ children, as: Component = 'h1', size, className }: HeadlineProps) => {
+  return (
+    <Component
+      className={classNames(
+        {
+          'text-6xl': size === 'h1',
+          'text-5xl': size === 'h2',
+          'text-4xl': size === 'h3',
+          'text-3xl': size === 'h4',
+          'text-2xl': size === 'h5',
+          'text-xl': size === 'h6',
+        },
+        className
+      )}
+    >
+      {children}
+    </Component>
+  );
+};
+
+export default Headline;
+```
+
+Integrational component for a headline:
+
+```tsx
+import { ContentComponent, Editable, useNode } from '@networkteam/zebra';
+
+import Headline from '../ui/Headline';
+
+const ContentHeadline = () => {
+  const node = useNode();
+  return (
+    <ContentComponent>
+      <Headline as={node.properties.hierarchy} size={node.properties.size}>
+        <Editable property="title" />
+      </Headline>
+    </ContentComponent>
+  );
+};
+
+export default ContentHeadline;
+```
 
 ## How does it work?
 
