@@ -43,7 +43,8 @@ export const useContentComponent = () => {
 
   return {
     'data-__neos-node-contextpath': inBackend ? contextPath : undefined,
-    // Use a fixed fusion path to render an out-of-band preview of this node
+    // Use a fixed fusion path to render an out-of-band preview of this node.
+    // The Networkteam.Neos.Next package provides a Fusion prototype that renders the node through Next.js.
     'data-__neos-fusion-path': inBackend ? 'neosNext/previewNode' : undefined,
   };
 };
