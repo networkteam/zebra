@@ -69,6 +69,8 @@ export interface DocumentsItem {
   };
   routePath: string;
   renderUrl: string;
+  creationDateTime: string;
+  lastPublicationDateTime?: string;
 }
 
 export interface ApiErrors {
