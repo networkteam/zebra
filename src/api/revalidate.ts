@@ -11,12 +11,6 @@ export default async function NeosRevalidate(req: NextApiRequest, res: NextApiRe
     return res.status(401).json({ error: 'Invalid token', revalidated: false });
   }
 
-  // Just say everything is okay ;)
-  // Dev server is single threaded and blocks.
-
-  // TODO Add env var to disable the early response for production
-  res.json({ revalidated: true });
-
   try {
     if (Array.isArray(req.body.documents)) {
       log.debug(
@@ -26,12 +20,14 @@ export default async function NeosRevalidate(req: NextApiRequest, res: NextApiRe
         req.body.documents.map((doc: { routePath: string }) => doc.routePath)
       );
 
-      // Revalidate all documents
+      // Revalidate all changed documents
       const promises = req.body.documents.map((document: { routePath: string }) => res.revalidate(document.routePath));
       await Promise.all(promises);
 
       log.debug('Revalidation done');
     }
+
+    res.json({ revalidated: true });
 
     return;
   } catch (err) {

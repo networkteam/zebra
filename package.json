@@ -51,5 +51,8 @@
       "import": "./dist/zebra.js",
       "require": "./dist/zebra.umd.cjs"
     }
+  },
+  "dependencies": {
+    "@supercharge/promise-pool": "^2.3.2"
   }
 }

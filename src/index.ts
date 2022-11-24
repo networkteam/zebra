@@ -1,6 +1,7 @@
 export * from './types';
 
 export { default as NeosRevalidate } from './api/revalidate';
+export { default as NeosRevalidateAll } from './api/revalidateAll';
 
 export { default as NeosContext } from './utils/context';
 
