@@ -22,6 +22,8 @@ export default async function NeosRevalidate(req: NextApiRequest, res: NextApiRe
 
       // Revalidate all changed documents
       const promises = req.body.documents.map((document: { routePath: string }) => res.revalidate(document.routePath));
+
+      // TODO Add revalidate concurrency
       await Promise.all(promises);
 
       log.debug('Revalidation done');

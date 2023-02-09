@@ -109,12 +109,7 @@ export const loadServerSideDocumentProps = async ({ query, req }: GetServerSideP
   const startTime = Date.now();
   const fetchUrl = apiUrl + '/neos/content-api/document?contextPath=' + encodeURIComponent(contextPath);
   const response = await fetch(fetchUrl, {
-    headers: {
-      // Pass the cookie to content API to forward the Neos session
-      Cookie: req.headers.cookie ?? '',
-      // Pass the current host to generate correct public-facing URIs in Neos
-      'X-Forwarded-Host': req.headers.host ?? '',
-    },
+    headers: buildNeosPreviewHeaders(req),
   });
 
   if (!response.ok) {
@@ -155,12 +150,7 @@ export const loadServerSideNodeProps = async ({ query, req }: GetServerSideProps
   const startTime = Date.now();
   const fetchUrl = apiUrl + '/neos/content-api/node?contextPath=' + encodeURIComponent(contextPath);
   const response = await fetch(fetchUrl, {
-    headers: {
-      // Pass the cookie to content API to forward the Neos session
-      Cookie: req.headers.cookie ?? '',
-      // Pass the current host to generate correct public-facing URIs in Neos
-      'X-Forwarded-Host': req.headers.host ?? '',
-    },
+    headers: buildNeosPreviewHeaders(req),
   });
 
   if (!response.ok) {
@@ -256,3 +246,25 @@ export const withZebra = (nextConfig: NextConfig): NextConfig => {
     },
   };
 };
+
+export const buildNeosPreviewHeaders = (req: GetServerSidePropsContext["req"]) => {
+  const headers: HeadersInit = {
+    // Pass the cookie to content API to forward the Neos session
+    Cookie: req.headers.cookie ?? '',
+  };
+  // Set forwarded host and port to make sure URIs in metadata are correct for the Neos UI
+  if (req.headers.host) {
+    // Split host and port from header
+    const [host, port] = req.headers.host.split(':');
+    headers['X-Forwarded-Host'] = host;
+    if (port) {
+      headers['X-Forwarded-Port'] = port;
+    } else {
+      // Check if HTTPS or HTTP request and set default port to make sure Neos does not use port of an internal endpoint
+      headers['X-Forwarded-Port'] = req.headers['x-forwarded-proto'] === 'https' ? '443' : '80';
+      headers['X-Forwarded-Proto'] =
+        typeof req.headers['x-forwarded-proto'] === 'string' ? req.headers['x-forwarded-proto'] : 'http';
+    }
+  }
+  return headers;
+}
