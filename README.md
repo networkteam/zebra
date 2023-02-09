@@ -29,7 +29,10 @@ TODO Publish demo project ;)
 
 ### Environment variables
 
-* `NEOS_BASE_URL`: The base URL of your Neos installation
+* `NEOS_BASE_URL`: The base URL of your Neos installation. This could be an internal URL that is not reachable from outside.
+* `PUBLIC_BASE_URL`: The base URL of your Next.js site. This is the URL where your website will be reachable from outside.
+* `REVALIDATE_TOKEN`: A secret token that will be used to validate calls to the revalidate API route.
+* `REVALIDATE_CONCURRENCY`: How many concurrent revalidations should be performed. Defaults to `2`.
 
 ## Rendering content
 
@@ -218,6 +221,12 @@ TODO Write about development setup of a Neos / Next project
 ## Deployment
 
 TODO Write about deployment of a Neos / Next project
+
+### Multi-site caveats
+
+* You have to add the publicly used base URL as the primary domain to each site in Neos (via backend module or Flow CLI).
+* Next.js needs to know about the publicly used base URL via the `PUBLIC_BASE_URL` env var to make sure URIs are generated correctly for revalidate calls to the content API in Neos.
+* Your Neos will need to accept proxy headers from Next.js, make sure to allow it in `Neos.Flow.http.trustedProxies` in `Settings.yaml`.
 
 ## Release a new version
 

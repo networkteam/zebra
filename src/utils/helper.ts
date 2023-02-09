@@ -13,7 +13,9 @@ export const loadStaticPaths = async ({ locales, defaultLocale }: GetStaticPaths
 
   const startTime = Date.now();
   const fetchUrl = apiUrl + '/neos/content-api/documents';
-  const response = await fetch(fetchUrl);
+  const response = await fetch(fetchUrl, {
+    headers: buildNeosHeaders(),
+  });
 
   if (!response.ok) {
     const data: ApiErrors = await response.json();
@@ -71,7 +73,9 @@ export const loadStaticProps = async ({ params, locale, defaultLocale }: GetStat
 
   const startTime = Date.now();
   const fetchUrl = apiUrl + '/neos/content-api/document?path=' + encodeURIComponent(path);
-  const response = await fetch(fetchUrl);
+  const response = await fetch(fetchUrl, {
+    headers: buildNeosHeaders(),
+  });
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -90,7 +94,7 @@ export const loadStaticProps = async ({ params, locale, defaultLocale }: GetStat
 
   const data: NeosData = await response.json();
   const endTime = Date.now();
-  log.debug('fetched data from content API for path', path, ', took', `${endTime - startTime}ms`);
+  log.debug('fetched data from content API for path', path, ', took', `${endTime - startTime}ms`, buildNeosHeaders());
 
   return data;
 };
@@ -247,24 +251,47 @@ export const withZebra = (nextConfig: NextConfig): NextConfig => {
   };
 };
 
-export const buildNeosPreviewHeaders = (req: GetServerSidePropsContext["req"]) => {
+export const buildNeosPreviewHeaders = (req: GetServerSidePropsContext['req']) => {
   const headers: HeadersInit = {
     // Pass the cookie to content API to forward the Neos session
     Cookie: req.headers.cookie ?? '',
   };
-  // Set forwarded host and port to make sure URIs in metadata are correct for the Neos UI
-  if (req.headers.host) {
-    // Split host and port from header
-    const [host, port] = req.headers.host.split(':');
-    headers['X-Forwarded-Host'] = host;
-    if (port) {
-      headers['X-Forwarded-Port'] = port;
-    } else {
-      // Check if HTTPS or HTTP request and set default port to make sure Neos does not use port of an internal endpoint
-      headers['X-Forwarded-Port'] = req.headers['x-forwarded-proto'] === 'https' ? '443' : '80';
-      headers['X-Forwarded-Proto'] =
-        typeof req.headers['x-forwarded-proto'] === 'string' ? req.headers['x-forwarded-proto'] : 'http';
+
+  // If PUBLIC_BASE_URL is set, we set the X-Forwarded-* headers from it
+  if (process.env.PUBLIC_BASE_URL) {
+    const publicBaseUrl = new URL(process.env.PUBLIC_BASE_URL);
+    headers['X-Forwarded-Host'] = publicBaseUrl.hostname;
+    headers['X-Forwarded-Port'] = publicBaseUrl.port;
+    headers['X-Forwarded-Proto'] = publicBaseUrl.protocol === 'https:' ? 'https' : 'http';
+  } else {
+    // Set forwarded host and port to make sure URIs in metadata are correct for the Neos UI
+    if (req.headers.host) {
+      // Split host and port from header
+      const [host, port] = req.headers.host.split(':');
+      headers['X-Forwarded-Host'] = host;
+      if (port) {
+        headers['X-Forwarded-Port'] = port;
+      } else {
+        // Check if HTTPS or HTTP request and set default port to make sure Neos does not use port of an internal endpoint
+        headers['X-Forwarded-Port'] = req.headers['x-forwarded-proto'] === 'https' ? '443' : '80';
+        headers['X-Forwarded-Proto'] =
+          typeof req.headers['x-forwarded-proto'] === 'string' ? req.headers['x-forwarded-proto'] : 'http';
+      }
     }
   }
   return headers;
-}
+};
+
+export const buildNeosHeaders = () => {
+  const headers: HeadersInit = {};
+
+  // If PUBLIC_BASE_URL is set, we set the X-Forwarded-* headers from it
+  if (process.env.PUBLIC_BASE_URL) {
+    const publicBaseUrl = new URL(process.env.PUBLIC_BASE_URL);
+    headers['X-Forwarded-Host'] = publicBaseUrl.hostname;
+    headers['X-Forwarded-Port'] = publicBaseUrl.port;
+    headers['X-Forwarded-Proto'] = publicBaseUrl.protocol === 'https:' ? 'https' : 'http';
+  }
+
+  return headers;
+};
