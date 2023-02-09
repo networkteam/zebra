@@ -2,6 +2,7 @@ import PromisePool from '@supercharge/promise-pool/dist';
 import log from 'loglevel';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ApiErrors, DocumentsResponse } from '../types';
+import { buildNeosHeaders } from '../utils/helper';
 
 log.setDefaultLevel(log.levels.DEBUG);
 
@@ -21,7 +22,9 @@ export default async function NeosRevalidateAll(req: NextApiRequest, res: NextAp
       throw new Error('Missing NEOS_BASE_URL environment variable');
     }
     const fetchUrl = apiUrl + '/neos/content-api/documents';
-    const response = await fetch(fetchUrl);
+    const response = await fetch(fetchUrl, {
+      headers: buildNeosHeaders(),
+    });
 
     if (!response.ok) {
       const data: ApiErrors = await response.json();
@@ -69,4 +72,4 @@ const revalidateConcurrency = () => {
   }
 
   return concurrencyInt;
-}
+};

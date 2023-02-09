@@ -259,10 +259,7 @@ export const buildNeosPreviewHeaders = (req: GetServerSidePropsContext['req']) =
 
   // If PUBLIC_BASE_URL is set, we set the X-Forwarded-* headers from it
   if (process.env.PUBLIC_BASE_URL) {
-    const publicBaseUrl = new URL(process.env.PUBLIC_BASE_URL);
-    headers['X-Forwarded-Host'] = publicBaseUrl.hostname;
-    headers['X-Forwarded-Port'] = publicBaseUrl.port;
-    headers['X-Forwarded-Proto'] = publicBaseUrl.protocol === 'https:' ? 'https' : 'http';
+    applyProxyHeaders(headers, process.env.PUBLIC_BASE_URL);
   } else {
     // Set forwarded host and port to make sure URIs in metadata are correct for the Neos UI
     if (req.headers.host) {
@@ -283,15 +280,24 @@ export const buildNeosPreviewHeaders = (req: GetServerSidePropsContext['req']) =
 };
 
 export const buildNeosHeaders = () => {
-  const headers: HeadersInit = {};
+  const headers: Record<string, string> = {};
 
   // If PUBLIC_BASE_URL is set, we set the X-Forwarded-* headers from it
   if (process.env.PUBLIC_BASE_URL) {
-    const publicBaseUrl = new URL(process.env.PUBLIC_BASE_URL);
-    headers['X-Forwarded-Host'] = publicBaseUrl.hostname;
-    headers['X-Forwarded-Port'] = publicBaseUrl.port;
-    headers['X-Forwarded-Proto'] = publicBaseUrl.protocol === 'https:' ? 'https' : 'http';
+    applyProxyHeaders(headers, process.env.PUBLIC_BASE_URL);
   }
 
   return headers;
+};
+
+const applyProxyHeaders = (headers: Record<string, string>, baseUrl: string) => {
+  const publicBaseUrl = new URL(baseUrl);
+  headers['X-Forwarded-Host'] = publicBaseUrl.hostname;
+  if (publicBaseUrl.port) {
+    headers['X-Forwarded-Port'] = publicBaseUrl.port;
+  } else {
+    // Check if HTTPS or HTTP request and set default port to make sure Neos does not use port of an internal endpoint
+    headers['X-Forwarded-Port'] = publicBaseUrl.protocol === 'https:' ? '443' : '80';
+  }
+  headers['X-Forwarded-Proto'] = publicBaseUrl.protocol === 'https:' ? 'https' : 'http';
 };
