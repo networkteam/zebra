@@ -112,6 +112,8 @@ export const loadServerSideDocumentProps = async ({ query, req }: GetServerSideP
     headers: {
       // Pass the cookie to content API to forward the Neos session
       Cookie: req.headers.cookie ?? '',
+      // Pass the current host to generate correct public-facing URIs in Neos
+      'X-Forwarded-Host': req.headers.host ?? '',
     },
   });
 
@@ -156,6 +158,8 @@ export const loadServerSideNodeProps = async ({ query, req }: GetServerSideProps
     headers: {
       // Pass the cookie to content API to forward the Neos session
       Cookie: req.headers.cookie ?? '',
+      // Pass the current host to generate correct public-facing URIs in Neos
+      'X-Forwarded-Host': req.headers.host ?? '',
     },
   });
 
