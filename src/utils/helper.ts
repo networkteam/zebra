@@ -94,7 +94,7 @@ export const loadStaticProps = async ({ params, locale, defaultLocale }: GetStat
 
   const data: NeosData = await response.json();
   const endTime = Date.now();
-  log.debug('fetched data from content API for path', path, ', took', `${endTime - startTime}ms`, buildNeosHeaders());
+  log.debug('fetched data from content API for path', path, ', took', `${endTime - startTime}ms`);
 
   return data;
 };
