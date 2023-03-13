@@ -19,6 +19,19 @@ Our question was: Can we retain the editing experience of Neos while using Next.
 * Use multi-language sites with Neos and Next.js
 * Supports multi-site setups (single Neos with sites, multiple Next.js instances)
 
+## How does it work?
+
+This package is used inside a Next.js project that fetches content from Neos CMS for rendering and offers editing with full preview capabilities. It provides components and hooks to handle the rendering of nodes and adding editing metadata for the Neos UI.
+
+Inside Neos CMS a few supporting packages are used to provide the content via an API for Next.js and adjust the behavior of the Neos UI:
+
+* [Networkteam.Neos.ContentApi](https://github.com/networkteam/Networkteam.Neos.ContentApi) for providing the content via a JSON API.
+* [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) for integrating Next.js as a preview of nodes and handle revalidation of changed documents on publishing.
+
+We also published some supporting tools:
+
+* [github.com/networkteam/grazer](https://github.com/networkteam/grazer) is an HTTP service implementing a specialized priority queue to revalidate pages for changed documents reliably.
+
 ## Installation
 
 See our demo project for a working example.
@@ -147,15 +160,6 @@ const ContentHeadline = () => {
 export default ContentHeadline;
 ```
 
-## How does it work?
-
-This package is used inside a Next.js project that uses Neos CMS for rendering of content and editing with full preview capabilities. It provides components and hooks to handle the rendering of nodes and adding editing metadata for the Neos UI.
-
-Inside Neos CMS a few supporting packages are used to provide the necessary data for the frontend and change the behavior of the Neos UI:
-
-* [Networkteam.Neos.ContentApi](https://github.com/networkteam/Networkteam.Neos.ContentApi) for providing the content via a JSON API
-* [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) for integrating Next.js for preview of nodes and handle revalidation of generated content on publishing
-
 ### Static site generation
 
 <details>
@@ -198,7 +202,11 @@ Inside Neos CMS a few supporting packages are used to provide the necessary data
 
   This is done by the [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) package in Neos. It hooks into the publishing signals, collects changed nodes and their closest document nodes and triggers a revalidation of the pages via a Next.js API route (defaults to `/api/revalidate`). A revalidate token is used to prevent unauthorized revalidation requests.
 
-  For this to work, the Next.js base URL has to be known inside Neos.
+  Note: For this to work, the Next.js base URL has to be known inside Neos.
+  
+  Since content often depends on other documents (e.g. document titles in navigation, teaser cards, etc.), it is advised to implement a _full revalidation_ after every change. This is why we developed [grazer](https://github.com/networkteam/grazer): it receives revalidate requests from Neos at `/api/revalidate` and handles revalidation requests of all other documents to Next.js in the background. It uses a priority queue that prioritizes older and explicit revalidate route paths before other route paths that are revalidated for consistency.
+  
+  Note: This approach works reasonably well and solves a lot of complexity with dependencies and figuring out an _exact_ set of document to revalidate.
 </details>
 
 ### Preview of a single node (out of band rendering)
@@ -220,7 +228,20 @@ TODO Write about development setup of a Neos / Next project
 
 ## Deployment
 
-TODO Write about deployment of a Neos / Next project
+Deploying a site where content comes from Neos CMS and the actual frontend is generated in Next.js is a little bit more involved, since both systems work together when generating content or using the backend.
+
+There are multiple things to consider:
+
+* The Next.js frontend needs to be built and packaged:
+  * If static pages are pre-built, the Neos CMS deployment has to be finished before the Next.js frontend can be built.
+  * Another, simpler approach is, to not generate static content here and use an env variable like `CI` to control if static paths / props are fetched from Neos. It works well with `fallback: 'blocking'`, since that will request static props on demand if not yet cached. Bundled with [grazer](https://github.com/networkteam/grazer) an initial revalidation can be performed that will cache all static pages _after Neos and Next are deployed_.
+* Next.js needs to be accessible via a public URL, but requests to Neos should also use this URL to generate correct absolute links and resolve sites.
+  Neos must be accessible form Next.js via another URL - which also could be purely internal (e.g. a Kubernetes Service).
+  This is why `PUBLIC_BASE_URL` is provided to the Next.js frontend, which will set `X-Forwarded-*` proxy headers for Neos.
+  Check that your `trustedProxies` configuration in Neos allows this.
+* Some paths should be routed to Neos (`/neos`, `/_Resources`) and others to Next.js (`/neos/preview`, `/`). In Kubernetes this can be solved at the Ingress level.
+
+TODO Write more about deployment of a Neos / Next project
 
 ### Multi-site caveats
 
