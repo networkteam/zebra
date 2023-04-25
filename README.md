@@ -43,7 +43,7 @@ We also published some supporting tools:
   * [`pages/neos/preview.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/neos/preview.tsx)
   * [`pages/neos/previewNode.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/neos/previewNode.tsx)
   * [`pages/api/revalidate.ts`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/api/revalidate.ts)
-* Configure a custom document or add `<BackendContainer />` to your existing `_document.tsx`
+* Configure a custom document or add `<BackendContainer />` to your existing [`pages/_document.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/_document.tsx)
 * Set the environment variable `NEOS_BASE_URL` to your Neos installation
 
 See the demo project for a working example:
