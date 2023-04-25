@@ -35,9 +35,20 @@ We also published some supporting tools:
 
 ## Installation
 
-See our demo project for a working example.
+* Create or use an existing Next.js project
+* Add `@networkteam/zebra` to your project
+* Apply `withZebra` to your `next.config.js`
+* Create a few pages and an API route for revalidation:
+  * [`pages/[[...slug]].tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/[[...slug]].tsx)
+  * [`pages/neos/preview.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/neos/preview.tsx)
+  * [`pages/neos/previewNode.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/neos/previewNode.tsx)
+  * [`pages/api/revalidate.ts`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/api/revalidate.ts)
+* Configure a custom document or add `<BackendContainer />` to your existing `_document.tsx`
+* Set the environment variable `NEOS_BASE_URL` to your Neos installation
 
-TODO Publish demo project ;)
+See the demo project for a working example:
+
+[github.com/networkteam/zebra-demo](https://github.com/networkteam/zebra-demo)
 
 ## Configuration
 
