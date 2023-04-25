@@ -231,6 +231,10 @@ export const withZebra = (nextConfig: NextConfig): NextConfig => {
           destination: process.env.NEOS_BASE_URL + '/neos/:path*',
         },
         {
+          source: '/media/thumbnail/:path*',
+          destination: process.env.NEOS_BASE_URL + '/media/thumbnail/:path*',
+        },
+        {
           source: '/_Resources/:path*',
           destination: process.env.NEOS_BASE_URL + '/_Resources/:path*',
         },
