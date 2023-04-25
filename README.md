@@ -1,3 +1,4 @@
+[![npm version](https://badge.fury.io/js/@networkteam%2Fzebra.svg)](https://badge.fury.io/js/@networkteam%2Fzebra)
 # @networkteam/zebra
 
 🦓
