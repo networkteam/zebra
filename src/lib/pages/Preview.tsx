@@ -13,7 +13,9 @@ export default function Preview({ meta, site, node, backend }: NeosData, nodeTyp
   }, [node, backend]);
 
   return (
-    <NeosContext.Provider value={{ node, documentNode: node, site, meta, inBackend, nodeTypes }}>
+    <NeosContext.Provider
+      value={{ node, documentNode: node, site, meta, nodeTypes, inBackend, editPreviewMode: backend?.editPreviewMode }}
+    >
       <ContentRegistry node={node} />
     </NeosContext.Provider>
   );

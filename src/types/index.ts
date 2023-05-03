@@ -42,6 +42,14 @@ export interface NeosContentNode extends NeosNode {
 
 export interface BackendProps {
   documentInformation?: any;
+  editPreviewMode?: BackendEditPreviewMode;
+}
+
+export interface BackendEditPreviewMode {
+  name: string;
+  isPreview: boolean;
+  isEdit: boolean;
+  options: Record<string, any> | null;
 }
 
 export type NeosNodeTypes = Record<string, React.FC>;
@@ -51,8 +59,9 @@ export interface NeosContextProps {
   documentNode: NeosDocumentNode;
   site: NeosNode;
   meta: any;
-  inBackend: boolean;
   nodeTypes: Record<string, any>;
+  inBackend: boolean;
+  editPreviewMode?: BackendEditPreviewMode;
 }
 
 export interface DocumentsResponse {

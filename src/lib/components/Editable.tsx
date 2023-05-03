@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import { useInBackend, useNode } from '../../utils/hooks';
+import { useEditPreviewMode, useInBackend, useNode } from '../../utils/hooks';
 
 type EditableProps = {
   as?: keyof JSX.IntrinsicElements;
@@ -11,20 +11,23 @@ type EditableProps = {
 export default function Editable({ as = 'div', property, ...rest }: EditableProps) {
   const { properties, nodeType, contextPath } = useNode();
   const inBackend = useInBackend();
+  const editPreviewMode = useEditPreviewMode();
   const { className, ...restAttributes } = rest;
   const Component = as;
 
+  if (!inBackend || editPreviewMode?.isEdit === false) {
+    return <Component {...rest} dangerouslySetInnerHTML={{ __html: properties[property] }} />;
+  }
+
   return (
     <Component
-      className={classNames(className, {
-        'neos-inline-editable': inBackend,
-      })}
-      data-__neos-property={inBackend ? property : undefined}
-      data-__neos-editable-node-contextpath={inBackend ? contextPath : undefined}
-      data-__neos-node-contextpath={inBackend ? contextPath : undefined}
-      property={inBackend ? 'typo3:' + property : undefined}
-      data-neos-node-type={inBackend ? nodeType : undefined}
-      contentEditable={inBackend ? true : undefined}
+      className={classNames(className, 'neos-inline-editable')}
+      data-__neos-property={property}
+      data-__neos-editable-node-contextpath={contextPath}
+      data-__neos-node-contextpath={contextPath}
+      property={'typo3:' + property}
+      data-neos-node-type={nodeType}
+      contentEditable
       dangerouslySetInnerHTML={{ __html: properties[property] }}
       {...restAttributes}
     />

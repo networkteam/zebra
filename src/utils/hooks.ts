@@ -1,31 +1,36 @@
 import { useContext, useEffect } from 'react';
 
-import { NeosContentNode, NeosContextProps } from '../types';
+import { NeosContentNode } from '../types';
 import NeosContext from './context';
 
 export const useMeta = () => {
-  const context = useContext(NeosContext) as NeosContextProps;
+  const context = useContext(NeosContext)!;
   return context?.meta;
 };
 
 export const useNode = () => {
-  const context = useContext(NeosContext) as NeosContextProps;
+  const context = useContext(NeosContext)!;
   return context?.node;
 };
 
 export const useDocumentNode = () => {
-  const context = useContext(NeosContext) as NeosContextProps;
+  const context = useContext(NeosContext)!;
   return context?.documentNode;
 };
 
 export const useSiteNode = () => {
-  const context = useContext(NeosContext) as NeosContextProps;
+  const context = useContext(NeosContext)!;
   return context?.site;
 };
 
 export const useInBackend = () => {
-  const context = useContext(NeosContext) as NeosContextProps;
+  const context = useContext(NeosContext)!;
   return context?.inBackend;
+};
+
+export const useEditPreviewMode = () => {
+  const context = useContext(NeosContext)!;
+  return context?.editPreviewMode;
 };
 
 export const useContentComponent = () => {

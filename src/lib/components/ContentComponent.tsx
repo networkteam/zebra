@@ -1,4 +1,4 @@
-import { useContentComponent } from '../../utils/hooks';
+import { useContentComponent, useInBackend } from '../../utils/hooks';
 
 type ContentComponentProps = {
   as?: keyof JSX.IntrinsicElements;
