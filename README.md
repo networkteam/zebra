@@ -276,6 +276,10 @@ Use `@next` as version in your project package.json to use the current pre-relea
 4. Create a new release with release notes from newly created tag on github
 5. The new release will trigger GitHub Actions that will publish to NPM
 
+## 🙏 Appreciation
+
+Special thanks to Philip Schmidt (@esdete2) for initiating and pushing the full-editing approach and implementing the first Zebra project in his spare-time.
+
 ## License
 
 [MIT](./LICENSE.md)
