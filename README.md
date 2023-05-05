@@ -278,7 +278,7 @@ Use `@next` as version in your project package.json to use the current pre-relea
 
 ## 🙏 Appreciation
 
-Special thanks to Philip Schmidt [@esdete2](https://github.com/esdete2) for initiating and pushing the full-editing approach and implementing the first Zebra project in his spare-time.
+Special thanks to Philip Schmidt ([@esdete2](https://github.com/esdete2)) for initiating and pushing the full-editing approach and implementing the first Zebra project in his spare-time.
 
 ## License
 
