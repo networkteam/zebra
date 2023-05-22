@@ -43,6 +43,7 @@ export interface NeosContentNode extends NeosNode {
 export interface BackendProps {
   documentInformation?: any;
   editPreviewMode?: BackendEditPreviewMode;
+  guestFrameApplication?: string;
 }
 
 export interface BackendEditPreviewMode {

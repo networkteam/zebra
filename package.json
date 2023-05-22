@@ -53,6 +53,7 @@
     }
   },
   "dependencies": {
-    "@supercharge/promise-pool": "^2.3.2"
+    "@supercharge/promise-pool": "^2.3.2",
+    "html-react-parser": "^3.0.16"
   }
 }

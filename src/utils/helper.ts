@@ -1,5 +1,8 @@
 import log from 'loglevel';
 import { GetServerSidePropsContext, GetStaticPathsContext, GetStaticPropsContext, NextConfig } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import parse from 'html-react-parser';
 
 import { ApiErrors, BackendProps, DocumentsResponse, NeosContentNode, NeosData } from '../types';
 
@@ -180,46 +183,58 @@ export const routePathToSlug = (routePath: string): string[] => {
   return routePath.split('/');
 };
 
-// Use useEffect to prevent errors with Rehydration to set Neos metadata
-export const injectNeosBackendMetadata = (node: NeosContentNode, backend: BackendProps | undefined) => {
+// Sets expected metadata for the Neos UI and dispatches the Neos.Neos.Ui.ContentReady event
+export const injectNeosBackendMetadata = (backend: BackendProps | undefined) => {
   (window as any)['@Neos.Neos.Ui:DocumentInformation'] = backend?.documentInformation;
 
-  if (!document.getElementById('_neos-ui-css')) {
-    const hostCss = document.createElement('link');
-    hostCss.id = '_neos-ui-css';
-    hostCss.rel = 'stylesheet';
-    hostCss.href = '/_Resources/Static/Packages/Neos.Neos.Ui.Compiled/Styles/Host.css';
-    document.head.appendChild(hostCss);
-  }
-
-  if (!document.getElementById('_neos-next-window')) {
-    const nextWindow = document.createElement('script');
-    nextWindow.id = '_neos-next-window';
-    nextWindow.innerHTML = 'window.neos = window.parent.neos;';
-    document.head.appendChild(nextWindow);
-  }
-
-  if (!document.getElementById('_neos-ui-vendor')) {
-    const vendorScript = document.createElement('script');
-    vendorScript.id = '_neos-ui-vendor';
-    vendorScript.src = '/_Resources/Static/Packages/Neos.Neos.Ui.Compiled/JavaScript/Vendor.js';
-    document.head.appendChild(vendorScript);
-  }
-
-  if (!document.getElementById('_neos-ui-guest')) {
-    const guestScript = document.createElement('script');
-    guestScript.id = '_neos-ui-guest';
-    guestScript.src = '/_Resources/Static/Packages/Neos.Neos.Ui.Compiled/JavaScript/Guest.js';
-    document.head.appendChild(guestScript);
-  }
-
   const event = new CustomEvent('Neos.Neos.Ui.ContentReady');
-  console.debug('Neos.Neos.Ui.ContentReady');
   window.parent.document.dispatchEvent(event);
 
   // TODO Check if we can do it differently
   document.body.classList.add('neos-backend');
 };
+
+// Hook to notify the iframe host about route changes (with fake unload / load events)
+export const useNotifyContentCanvasRouteChanges = () => {
+  const router = useRouter();
+
+  const onRouteChangeStart = () => {
+    // Dispatch an unload event for the ContentCanvas to start the loading animation
+    const event = new CustomEvent('unload');
+    window.dispatchEvent(event);
+
+    // Workaround: we need to reset the initialized state of the document for a correct reset (e.g. focused element) and loading to stop
+    if ('__isInitialized' in document) {
+      delete document.__isInitialized;
+    }
+  };
+  const onRouteChangeEnd = () => {
+    // Fire event for iframe host about load and pass reference to iframe as target
+    const event = new CustomEvent<{ target: { contentWindow: Window } }>('load', {
+      detail: { target: { contentWindow: window } },
+    });
+    window.dispatchEvent(event);
+  };
+  useEffect(() => {
+    router.events.on('routeChangeStart', onRouteChangeStart);
+    router.events.on('routeChangeComplete', onRouteChangeEnd);
+    router.events.on('routeChangeError', onRouteChangeEnd);
+
+    return () => {
+      router.events.off('routeChangeStart', onRouteChangeStart);
+      router.events.off('routeChangeComplete', onRouteChangeEnd);
+      router.events.off('routeChangeError', onRouteChangeEnd);
+    };
+  }, [router]);
+}
+
+export const guestFrameIncludes = (backend: BackendProps | undefined) => {
+  if (backend?.guestFrameApplication) {
+    return parse(backend.guestFrameApplication);
+  }
+
+  return null;
+}
 
 export const withZebra = (nextConfig: NextConfig): NextConfig => {
   return {
