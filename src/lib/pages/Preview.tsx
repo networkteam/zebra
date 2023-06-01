@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { NeosNodeTypes, NeosData, BackendProps } from '../../types';
+import { NeosNodeTypes, NeosData } from '../../types';
 import NeosContext from '../../utils/context';
 import { injectNeosBackendMetadata } from '../../utils/helper';
 import ContentRegistry from '../components/ContentRegistry';
