@@ -2,9 +2,8 @@ import log from 'loglevel';
 import { GetServerSidePropsContext, GetStaticPathsContext, GetStaticPropsContext, NextConfig } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import parse from 'html-react-parser';
 
-import { ApiErrors, BackendProps, DocumentsResponse, NeosContentNode, NeosData } from '../types';
+import { ApiErrors, BackendInclude, BackendProps, DocumentsResponse, NeosData } from '../types';
 
 log.setDefaultLevel(log.levels.DEBUG);
 
@@ -187,11 +186,40 @@ export const routePathToSlug = (routePath: string): string[] => {
 export const injectNeosBackendMetadata = (backend: BackendProps | undefined) => {
   (window as any)['@Neos.Neos.Ui:DocumentInformation'] = backend?.documentInformation;
 
+  if (backend?.guestFrameApplication) {
+    createBackendIncludes(backend.guestFrameApplication);
+  }
+
   const event = new CustomEvent('Neos.Neos.Ui.ContentReady');
   window.parent.document.dispatchEvent(event);
 
   // TODO Check if we can do it differently
   document.body.classList.add('neos-backend');
+};
+
+// We add the includes explicitly and do not use next/head to have more control over the initialization order.
+const createBackendIncludes = (includes: BackendInclude[]) => {
+  for (let include of includes) {
+    const elId = `_neos-ui-${include.key}`;
+    // We perform a very simple check by id to sync the expected and actual presence of the head elements
+    if (!document.getElementById(elId)) {
+      const el = document.createElement(include.type);
+      el.id = elId;
+      if (el instanceof HTMLLinkElement && include.rel) {
+        el.rel = include.rel;
+      }
+      if (el instanceof HTMLLinkElement && include.href) {
+        el.href = include.href;
+      }
+      if (el instanceof HTMLScriptElement && include.src) {
+        el.src = include.src;
+      }
+      if (include.content) {
+        el.innerHTML = include.content;
+      }
+      document.head.appendChild(el);
+    }
+  }
 };
 
 // Hook to notify the iframe host about route changes (with fake unload / load events)
@@ -204,9 +232,8 @@ export const useNotifyContentCanvasRouteChanges = () => {
     window.dispatchEvent(event);
 
     // Workaround: we need to reset the initialized state of the document for a correct reset (e.g. focused element) and loading to stop
-    if ('__isInitialized' in document) {
-      delete document.__isInitialized;
-    }
+    //@ts-ignore
+    delete document.__isInitialized;
   };
   const onRouteChangeEnd = () => {
     // Fire event for iframe host about load and pass reference to iframe as target
@@ -226,15 +253,7 @@ export const useNotifyContentCanvasRouteChanges = () => {
       router.events.off('routeChangeError', onRouteChangeEnd);
     };
   }, [router]);
-}
-
-export const guestFrameIncludes = (backend: BackendProps | undefined) => {
-  if (backend?.guestFrameApplication) {
-    return parse(backend.guestFrameApplication);
-  }
-
-  return null;
-}
+};
 
 export const withZebra = (nextConfig: NextConfig): NextConfig => {
   return {

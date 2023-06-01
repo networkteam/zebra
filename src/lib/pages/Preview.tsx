@@ -1,10 +1,10 @@
-import { Fragment, useEffect } from 'react';
-import Head from 'next/head';
+import { useEffect, useState } from 'react';
 
-import { NeosNodeTypes, NeosData } from '../../types';
+import { NeosNodeTypes, NeosData, BackendProps } from '../../types';
 import NeosContext from '../../utils/context';
-import { guestFrameIncludes, injectNeosBackendMetadata, useNotifyContentCanvasRouteChanges } from '../../utils/helper';
+import { injectNeosBackendMetadata } from '../../utils/helper';
 import ContentRegistry from '../components/ContentRegistry';
+import { useNotifyContentCanvasRouteChanges } from '../../utils/helper';
 
 export default function Preview({ meta, site, node, backend }: NeosData, nodeTypes: NeosNodeTypes) {
   const inBackend = true;
@@ -18,9 +18,6 @@ export default function Preview({ meta, site, node, backend }: NeosData, nodeTyp
 
   return (
     <>
-      <Head>
-        <Fragment key="neos-ui-guest">{guestFrameIncludes(backend)}</Fragment>
-      </Head>
       <NeosContext.Provider
         value={{
           node,
