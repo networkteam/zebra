@@ -23,6 +23,7 @@ export {
   useInBackend,
   useContentCollection,
   useContentComponent,
+  useEditPreviewMode,
 } from './utils/hooks';
 
 export { default as Preview } from './lib/pages/Preview';
