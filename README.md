@@ -37,7 +37,14 @@ We also published some supporting tools:
 
 * Create or use an existing Next.js project
 * Add `@networkteam/zebra` to your project
-* Apply `withZebra` to your `next.config.js`
+* Apply `withZebra` to your `next.config.mjs` (we only expose an ESM module, so the Next.js config needs to use the `.mjs` extension):
+  ```js
+  import { withZebra } from '@networkteam/zebra';
+
+  export default withZebra({
+    // your next config
+  });
+  ```
 * Create a few pages and an API route for revalidation:
   * [`pages/[[...slug]].tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/[[...slug]].tsx)
   * [`pages/neos/preview.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/neos/preview.tsx)
@@ -46,11 +53,13 @@ We also published some supporting tools:
 * Configure a custom document or add `<BackendContainer />` to your existing [`pages/_document.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/_document.tsx)
 * Set the environment variable `NEOS_BASE_URL` to your Neos installation
 
-See the demo project for a working example:
+## Further reading
 
-[github.com/networkteam/zebra-demo](https://github.com/networkteam/zebra-demo)
+See the **demo project** for a working example:
 
-## Articles
+* [github.com/networkteam/zebra-demo](https://github.com/networkteam/zebra-demo)
+
+And here's a list of articles with more background:
 
 * [Zebra: Full editing with Neos and Next.js](https://networkteam.com/journal/2023/zebra-neos-and-next)
 
@@ -240,7 +249,14 @@ export default ContentHeadline;
 
 ## Development
 
-TODO Write about development setup of a Neos / Next project
+Have a look at the [Zebra Demo](https://github.com/networkteam/zebra-demo) for a full setup of developing a Next.js project alongside Neos CMS in a monorepo.
+
+Basically it boils down to:
+
+* Run Neos CMS locally
+* Run Next.js locally in development mode
+* Set `NEOS_BASE_URL` to the URL of your local Neos
+* Access Neos via the Next.js frontend at `/neos`
 
 ## Deployment
 
@@ -265,20 +281,28 @@ TODO Write more about deployment of a Neos / Next project
 * Next.js needs to know about the publicly used base URL via the `PUBLIC_BASE_URL` env var to make sure URIs are generated correctly for revalidate calls to the content API in Neos.
 * Your Neos will need to accept proxy headers from Next.js, make sure to allow it in `Neos.Flow.http.trustedProxies` in `Settings.yaml`.
 
-## Release a new version
+## Contributing
 
-### Pre-releases
+We are happy to accept contributions. Just open an issue or pull request.
 
-To create a pre-release one can push/merge changes to branch `next`. This triggers actions to automatically create a pre-release.
-Use `@next` as version in your project package.json to use the current pre-release.
+### Releasing a new version
 
-### Releases
+<details>
+<summary>Pre-release</summary>
 
-1. Merge your branch/changes into `main` branch
+To create a pre-release you can push / merge changes to branch `next`. This triggers actions to automatically create a pre-release.
+Use `@next` as version in your project `package.json` to use the current pre-release.
+</details>
+
+<details>
+<summary>Tagged release</summary>
+
+1. Merge your branch / changes into `main` branch
 2. Bump version in `package.json` with `npm version [<newversion> | major | minor | patch`
 3. Push bumped version including new tag to `main` branch with `git push --tags`
 4. Create a new release with release notes from newly created tag on github
 5. The new release will trigger GitHub Actions that will publish to NPM
+</details>
 
 ## 🙏 Appreciation
 
