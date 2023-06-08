@@ -18,13 +18,12 @@ export default defineConfig({
       formats: ['es', 'umd'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'next', 'next/router'],
+      external: ['react', 'react-dom', 'next', 'next'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
           next: 'next',
-          'next/router': 'nextRouter',
         },
       },
     },
