@@ -50,6 +50,10 @@ See the demo project for a working example:
 
 [github.com/networkteam/zebra-demo](https://github.com/networkteam/zebra-demo)
 
+## Articles
+
+* [Zebra: Full editing with Neos and Next.js](https://networkteam.com/journal/2023/zebra-neos-and-next)
+
 ## Configuration
 
 ### Environment variables
@@ -215,9 +219,9 @@ export default ContentHeadline;
   This is done by the [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) package in Neos. It hooks into the publishing signals, collects changed nodes and their closest document nodes and triggers a revalidation of the pages via a Next.js API route (defaults to `/api/revalidate`). A revalidate token is used to prevent unauthorized revalidation requests.
 
   Note: For this to work, the Next.js base URL has to be known inside Neos.
-  
+
   Since content often depends on other documents (e.g. document titles in navigation, teaser cards, etc.), it is advised to implement a _full revalidation_ after every change. This is why we developed [grazer](https://github.com/networkteam/grazer): it receives revalidate requests from Neos at `/api/revalidate` and handles revalidation requests of all other documents to Next.js in the background. It uses a priority queue that prioritizes older and explicit revalidate route paths before other route paths that are revalidated for consistency.
-  
+
   Note: This approach works reasonably well and solves a lot of complexity with dependencies and figuring out an _exact_ set of document to revalidate.
 </details>
 

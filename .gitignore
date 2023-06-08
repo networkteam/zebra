@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+api/
+index.d.ts
+index.d.ts.map
+index.js
+lib/
+types/
+utils/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

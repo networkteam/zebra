@@ -10,21 +10,34 @@
     "type": "git",
     "url": "https://github.com/networkteam/zebra"
   },
-  "type": "module",
-  "main": "dist/zebra.umd.cjs",
-  "module": "./dist/zebra.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
-    "dev": "vite build --watch",
-    "build": "tsc && vite build",
-    "package:dev": "yarn dev",
-    "package:build": "yarn build"
+    "build": "yarn clean && yarn tsc --project tsconfig.json && yarn babel --config-file ./config/babel.config.js src --out-dir . --extensions \".tsx,.ts,.js,.jsx\"",
+    "clean": "rm -rf index.d.ts* index.js api lib types utils",
+    "dev": "yarn clean && yarn watch",
+    "watch:ts": "yarn tsc --project tsconfig.dev.json",
+    "lint": "eslint src config"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.20.13",
+    "@supercharge/promise-pool": "^2.3.2"
   },
   "devDependencies": {
     "@types/node": "^18.7.21",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
-    "@vitejs/plugin-react": "^2.1.0",
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.2",
+    "@babel/plugin-proposal-optional-catch-binding": "^7.16.7",
+    "@babel/plugin-transform-runtime": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.17.12",
+    "@babel/preset-typescript": "^7.17.12",
     "classnames": "^2.3.1",
     "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.5.0",
@@ -42,18 +55,9 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "next": "^12.0.0"
+    "next": "^12.2.0 || ^13.0.0"
   },
   "files": [
     "dist"
-  ],
-  "exports": {
-    ".": {
-      "import": "./dist/zebra.js",
-      "require": "./dist/zebra.umd.cjs"
-    }
-  },
-  "dependencies": {
-    "@supercharge/promise-pool": "^2.3.2"
-  }
+  ]
 }
