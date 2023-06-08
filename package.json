@@ -20,7 +20,7 @@
     "build": "yarn clean && yarn tsc --project tsconfig.json && yarn babel --config-file ./config/babel.config.js src --out-dir . --extensions \".tsx,.ts,.js,.jsx\"",
     "clean": "rm -rf index.d.ts* index.js api lib types utils",
     "dev": "yarn clean && yarn watch",
-    "watch:ts": "yarn tsc --project tsconfig.dev.json",
+    "watch": "yarn tsc --project tsconfig.dev.json",
     "lint": "eslint src config"
   },
   "dependencies": {
@@ -48,9 +48,7 @@
     "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "typescript": "^4.6.4",
-    "vite": "^3.1.0",
-    "vite-plugin-dts": "^1.4.1"
+    "typescript": "^4.6.4"
   },
   "peerDependencies": {
     "react": "^18.2.0",
