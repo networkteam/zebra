@@ -40,9 +40,19 @@ export interface NeosContentNode extends NeosNode {
   };
 }
 
+export interface BackendInclude {
+  key: string;
+  type: 'script' | 'link';
+  content?: string;
+  src?: string;
+  href?: string;
+  rel?: string;
+}
+
 export interface BackendProps {
   documentInformation?: any;
   editPreviewMode?: BackendEditPreviewMode;
+  guestFrameApplication?: BackendInclude[];
 }
 
 export interface BackendEditPreviewMode {
