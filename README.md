@@ -37,7 +37,7 @@ We also published some supporting tools:
 
 * Create or use an existing Next.js project
 * Add `@networkteam/zebra` to your project
-* Apply `withZebra` to your `next.config.mjs` (we only expose an ESM module, so the Next.js config needs to use the `.mjs` extension):
+* Apply `withZebra` to your `next.config.mjs`:
   ```js
   import { withZebra } from '@networkteam/zebra';
 
