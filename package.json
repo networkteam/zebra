@@ -14,7 +14,8 @@
   "module": "index.js",
   "types": "index.d.ts",
   "exports": {
-    ".": "./index.js"
+    ".": "./index.js",
+    "./types": "./types/index.js"
   },
   "scripts": {
     "build": "yarn clean && yarn tsc --project tsconfig.json && yarn babel --config-file ./config/babel.config.js src --out-dir . --extensions \".tsx,.ts,.js,.jsx\"",
