@@ -16,26 +16,12 @@ module.exports = (api) => {
     };
   }
   return {
-    presets: [['@babel/preset-env', { targets: { node: 12 } }], '@babel/preset-typescript'],
-    plugins: ['@babel/plugin-proposal-optional-catch-binding', '@babel/plugin-transform-runtime'],
-    comments: false,
-    overrides: [
-      /*
-      {
-        test: ['../src/core/pages/*.tsx'],
-        presets: ['preact'],
-        plugins: [
-          [
-            'jsx-pragmatic',
-            {
-              module: 'preact',
-              export: 'h',
-              import: 'h',
-            },
-          ],
-        ],
-      },
-      */
+    presets: [
+      ['@babel/preset-env', { targets: { node: 12 } }],
+      ['@babel/preset-react', { runtime: 'automatic' }],
+      ['@babel/preset-typescript', { isTSX: true, allExtensions: true }],
     ],
+    plugins: ['@babel/plugin-proposal-optional-catch-binding', '@babel/plugin-transform-runtime'],
+    comments: false
   };
 };
