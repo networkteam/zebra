@@ -99,7 +99,7 @@ export const loadDocumentPropsCached = cache((routePath: string | undefined) => 
   if (!routePath) {
     return undefined;
   }
-  console.debug('Fetching data from Neos inside cache with route path', routePath);
+  log.debug('fetching data from Neos inside cache with route path', routePath);
   const slug = routePath.split('/').filter((s) => s.length > 0);
   return loadDocumentProps({ slug });
 });
@@ -108,7 +108,7 @@ export const loadPreviewDocumentPropsCached = cache((contextNodePath: string | u
   if (!contextNodePath) {
     return undefined;
   }
-  console.debug('Fetching data from Neos inside cache with context node path', contextNodePath);
+  log.debug('fetching data from Neos inside cache with context node path', contextNodePath);
   const searchParams = { 'node[__contextNodePath]': contextNodePath };
   return loadPreviewDocumentProps(searchParams);
 });
