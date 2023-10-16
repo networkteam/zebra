@@ -6,7 +6,13 @@ import ChildNodes from './ChildNodes';
 
 type ContentCollectionProviderProps = {
   nodeName: string;
-  children: ({ collectionProps, children }: { collectionProps: {}; children: React.ReactNode }) => React.ReactNode;
+  children: ({
+    collectionProps,
+    children,
+  }: {
+    collectionProps: Record<string, string | boolean | undefined>;
+    children: React.ReactNode;
+  }) => React.ReactNode;
 };
 
 export default function ContentCollectionProvider({ nodeName, children }: ContentCollectionProviderProps) {

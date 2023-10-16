@@ -21,6 +21,6 @@
       "react": ["node_modules/react"]
     }
   },
-  "include": ["src/**/*", "client.ts"],
+  "include": ["src/**/*"],
   "exclude": ["./*.js", "./*.d.ts"]
 }

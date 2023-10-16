@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 
+import { NeosContentNode } from '../../types';
 import { NeosServerContext } from '../utils/context';
 import { loadDocumentPropsCached, loadPreviewDocumentPropsCached } from '../utils/dataLoader';
 import { resolveCurrentNode } from '../utils/helper';
-import NodeRenderer from './NodeRenderer';
-import { NeosContentNode } from '../../types';
 import ContentComponentIncludes from './client/ContentComponentIncludes';
+import NodeRenderer from './NodeRenderer';
 
 type ContentCollectionProps = {
   as?: keyof JSX.IntrinsicElements;

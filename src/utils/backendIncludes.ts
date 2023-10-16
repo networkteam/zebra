@@ -17,7 +17,7 @@ export const injectNeosBackendMetadata = (backend: BackendProps | undefined) => 
 
 // We add the includes explicitly and do not use next/head to have more control over the initialization order.
 const createBackendIncludes = (includes: BackendInclude[]) => {
-  for (let include of includes) {
+  for (const include of includes) {
     const elId = `_neos-ui-${include.key}`;
     // We perform a very simple check by id to sync the expected and actual presence of the head elements
     if (!document.getElementById(elId)) {

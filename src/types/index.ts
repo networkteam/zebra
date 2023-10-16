@@ -1,3 +1,9 @@
+declare global {
+  interface Document {
+    __isInitialized?: boolean;
+  }
+}
+
 export interface NeosData {
   node: NeosContentNode;
   site: NeosNode;

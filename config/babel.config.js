@@ -23,6 +23,6 @@ module.exports = (api) => {
       ['@babel/preset-typescript', { isTSX: true, allExtensions: true }],
     ],
     plugins: ['@babel/plugin-proposal-optional-catch-binding', '@babel/plugin-transform-runtime'],
-    comments: false
+    comments: false,
   };
 };

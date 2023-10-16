@@ -45,7 +45,6 @@ export const useContentComponent = () => {
       ...(window as any)['@Neos.Neos.Ui:Nodes'],
       [contextPath]: backend?.serializedNode,
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
@@ -78,7 +77,6 @@ export const useContentCollection = (nodeName?: string) => {
       ...(window as any)['@Neos.Neos.Ui:Nodes'],
       [collectionNode.contextPath]: collectionNode.backend?.serializedNode,
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionNode]);
 
   if (!collectionNode) {
@@ -109,7 +107,6 @@ export const useNotifyContentCanvasRouteChanges = () => {
     window.dispatchEvent(event);
 
     // Workaround: we need to reset the initialized state of the document for a correct reset (e.g. focused element) and loading to stop
-    //@ts-ignore
     delete document.__isInitialized;
   };
   const onRouteChangeEnd = () => {
