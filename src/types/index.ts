@@ -5,6 +5,17 @@ export interface NeosData {
   backend?: BackendProps;
 }
 
+export type SiteData = {
+  site: {
+    content: Record<string, any>;
+    meta: {
+      title: string;
+      nodeType: string;
+      nodeName: string;
+    };
+  };
+};
+
 export interface NeosNode {
   identifier: string;
   nodeType: string;
@@ -53,6 +64,7 @@ export interface BackendProps {
   documentInformation?: any;
   editPreviewMode?: BackendEditPreviewMode;
   guestFrameApplication?: BackendInclude[];
+  routePath?: string;
 }
 
 export interface BackendEditPreviewMode {
@@ -95,3 +107,11 @@ export interface DocumentsItem {
 export interface ApiErrors {
   errors?: { message: string; code: number }[];
 }
+
+export type NeosServerContextProps = {
+  routePath?: string;
+  contextNodePath?: string;
+  inBackend?: boolean;
+  documentNodeIdentifier?: string;
+  currentNodeIdentifier?: string;
+};

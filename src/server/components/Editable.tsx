@@ -1,4 +1,4 @@
-import { useEditPreviewMode, useInBackend, useNode } from '../../utils/hooks';
+import { useEditPreviewMode, useInBackend, useNode } from '../utils/hooks';
 
 type EditableProps = {
   as?: keyof JSX.IntrinsicElements;
@@ -6,15 +6,24 @@ type EditableProps = {
   [x: string]: any;
 };
 
-export default function Editable({ as = 'div', property, ...rest }: EditableProps) {
-  const { properties, nodeType, contextPath } = useNode();
+const Editable = async ({ as = 'div', property, ...rest }: EditableProps) => {
   const inBackend = useInBackend();
-  const editPreviewMode = useEditPreviewMode();
+  const loadNode = useNode();
+  const loadEditPreviewMode = useEditPreviewMode();
+
+  const node = await loadNode();
+  const editPreviewMode = await loadEditPreviewMode();
+
+  if (!node) {
+    return null;
+  }
+
+  const { contextPath, nodeType, properties } = node;
   const { className, ...restAttributes } = rest;
   const Component = as;
 
   if (!inBackend || editPreviewMode?.isEdit === false) {
-    return <Component {...rest} dangerouslySetInnerHTML={{ __html: properties[property] }} />;
+    return <Component {...rest} dangerouslySetInnerHTML={{ __html: properties[property] || '' }} />;
   }
 
   return (
@@ -26,8 +35,10 @@ export default function Editable({ as = 'div', property, ...rest }: EditableProp
       property={'typo3:' + property}
       data-neos-node-type={nodeType}
       contentEditable
-      dangerouslySetInnerHTML={{ __html: properties[property] }}
+      dangerouslySetInnerHTML={{ __html: properties[property] || '' }}
       {...restAttributes}
     />
   );
-}
+};
+
+export default Editable;

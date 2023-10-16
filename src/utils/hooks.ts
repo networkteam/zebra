@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useContext, useEffect } from 'react';
 
 import { NeosContentNode } from '../types';
@@ -44,6 +45,7 @@ export const useContentComponent = () => {
       ...(window as any)['@Neos.Neos.Ui:Nodes'],
       [contextPath]: backend?.serializedNode,
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
@@ -69,13 +71,6 @@ export const useContentCollection = (nodeName?: string) => {
     collectionNode = children?.find((childNode) => childNode.nodeName === nodeName);
   }
 
-  if (!collectionNode) {
-    return {
-      collectionNode: neosContext.node,
-      collectionProps: {},
-    };
-  }
-
   useEffect(() => {
     if (!collectionNode || !inBackend) return;
 
@@ -83,7 +78,15 @@ export const useContentCollection = (nodeName?: string) => {
       ...(window as any)['@Neos.Neos.Ui:Nodes'],
       [collectionNode.contextPath]: collectionNode.backend?.serializedNode,
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionNode]);
+
+  if (!collectionNode) {
+    return {
+      collectionNode: neosContext.node,
+      collectionProps: {},
+    };
+  }
 
   return {
     collectionNode,
@@ -94,4 +97,37 @@ export const useContentCollection = (nodeName?: string) => {
       'data-__neos-insertion-anchor': inBackend ? true : undefined,
     },
   };
+};
+
+// Hook to notify the iframe host about route changes (with fake unload / load events)
+export const useNotifyContentCanvasRouteChanges = () => {
+  const router = useRouter();
+
+  const onRouteChangeStart = () => {
+    // Dispatch an unload event for the ContentCanvas to start the loading animation
+    const event = new CustomEvent('unload');
+    window.dispatchEvent(event);
+
+    // Workaround: we need to reset the initialized state of the document for a correct reset (e.g. focused element) and loading to stop
+    //@ts-ignore
+    delete document.__isInitialized;
+  };
+  const onRouteChangeEnd = () => {
+    // Fire event for iframe host about load and pass reference to iframe as target
+    const event = new CustomEvent<{ target: { contentWindow: Window } }>('load', {
+      detail: { target: { contentWindow: window } },
+    });
+    window.dispatchEvent(event);
+  };
+  useEffect(() => {
+    router.events.on('routeChangeStart', onRouteChangeStart);
+    router.events.on('routeChangeComplete', onRouteChangeEnd);
+    router.events.on('routeChangeError', onRouteChangeEnd);
+
+    return () => {
+      router.events.off('routeChangeStart', onRouteChangeStart);
+      router.events.off('routeChangeComplete', onRouteChangeEnd);
+      router.events.off('routeChangeError', onRouteChangeEnd);
+    };
+  }, [router]);
 };

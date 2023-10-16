@@ -1,9 +1,7 @@
 import log from 'loglevel';
-import { GetServerSidePropsContext, GetStaticPathsContext, GetStaticPropsContext, NextConfig } from 'next';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { GetServerSidePropsContext, GetStaticPathsContext, GetStaticPropsContext } from 'next';
 
-import { ApiErrors, BackendInclude, BackendProps, DocumentsResponse, NeosData } from '../types';
+import { ApiErrors, DocumentsResponse, NeosData } from '../types';
 
 log.setDefaultLevel(log.levels.DEBUG);
 
@@ -180,113 +178,6 @@ export const routePathToSlug = (routePath: string): string[] => {
     routePath = routePath.substring(1);
   }
   return routePath.split('/');
-};
-
-// Sets expected metadata for the Neos UI and dispatches the Neos.Neos.Ui.ContentReady event
-export const injectNeosBackendMetadata = (backend: BackendProps | undefined) => {
-  (window as any)['@Neos.Neos.Ui:DocumentInformation'] = backend?.documentInformation;
-
-  if (backend?.guestFrameApplication) {
-    createBackendIncludes(backend.guestFrameApplication);
-  }
-
-  const event = new CustomEvent('Neos.Neos.Ui.ContentReady');
-  window.parent.document.dispatchEvent(event);
-
-  // TODO Check if we can do it differently
-  document.body.classList.add('neos-backend');
-};
-
-// We add the includes explicitly and do not use next/head to have more control over the initialization order.
-const createBackendIncludes = (includes: BackendInclude[]) => {
-  for (let include of includes) {
-    const elId = `_neos-ui-${include.key}`;
-    // We perform a very simple check by id to sync the expected and actual presence of the head elements
-    if (!document.getElementById(elId)) {
-      const el = document.createElement(include.type);
-      el.id = elId;
-      if (el instanceof HTMLLinkElement && include.rel) {
-        el.rel = include.rel;
-      }
-      if (el instanceof HTMLLinkElement && include.href) {
-        el.href = include.href;
-      }
-      if (el instanceof HTMLScriptElement && include.src) {
-        el.src = include.src;
-      }
-      if (include.content) {
-        el.innerHTML = include.content;
-      }
-      document.head.appendChild(el);
-    }
-  }
-};
-
-// Hook to notify the iframe host about route changes (with fake unload / load events)
-export const useNotifyContentCanvasRouteChanges = () => {
-  const router = useRouter();
-
-  const onRouteChangeStart = () => {
-    // Dispatch an unload event for the ContentCanvas to start the loading animation
-    const event = new CustomEvent('unload');
-    window.dispatchEvent(event);
-
-    // Workaround: we need to reset the initialized state of the document for a correct reset (e.g. focused element) and loading to stop
-    //@ts-ignore
-    delete document.__isInitialized;
-  };
-  const onRouteChangeEnd = () => {
-    // Fire event for iframe host about load and pass reference to iframe as target
-    const event = new CustomEvent<{ target: { contentWindow: Window } }>('load', {
-      detail: { target: { contentWindow: window } },
-    });
-    window.dispatchEvent(event);
-  };
-  useEffect(() => {
-    router.events.on('routeChangeStart', onRouteChangeStart);
-    router.events.on('routeChangeComplete', onRouteChangeEnd);
-    router.events.on('routeChangeError', onRouteChangeEnd);
-
-    return () => {
-      router.events.off('routeChangeStart', onRouteChangeStart);
-      router.events.off('routeChangeComplete', onRouteChangeEnd);
-      router.events.off('routeChangeError', onRouteChangeEnd);
-    };
-  }, [router]);
-};
-
-export const withZebra = (nextConfig: NextConfig): NextConfig => {
-  return {
-    ...nextConfig,
-    rewrites: async () => {
-      const neosRewrites = [
-        {
-          source: '/neos/:path*',
-          destination: process.env.NEOS_BASE_URL + '/neos/:path*',
-        },
-        {
-          source: '/media/thumbnail/:path*',
-          destination: process.env.NEOS_BASE_URL + '/media/thumbnail/:path*',
-        },
-        {
-          source: '/_Resources/:path*',
-          destination: process.env.NEOS_BASE_URL + '/_Resources/:path*',
-        },
-      ];
-
-      const rewrites = await nextConfig.rewrites?.();
-
-      if (!rewrites) {
-        return neosRewrites;
-      }
-      if (Array.isArray(rewrites)) {
-        return rewrites.concat(neosRewrites);
-      }
-
-      rewrites.afterFiles = rewrites.afterFiles.concat(neosRewrites);
-      return rewrites;
-    },
-  };
 };
 
 export const buildNeosPreviewHeaders = (req: GetServerSidePropsContext['req']) => {

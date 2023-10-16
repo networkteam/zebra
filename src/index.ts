@@ -1,19 +1,21 @@
 export * from './types';
 
 export { default as NeosRevalidate } from './api/revalidate';
-export { default as NeosRevalidateAll } from './api/revalidateAll';
+export { default as NeosRevalidateAll } from './api/revalidate';
 
 export { default as NeosContext } from './utils/context';
 
 export {
-  injectNeosBackendMetadata,
   loadStaticPaths,
   loadStaticProps,
   loadServerSideDocumentProps,
   loadServerSideNodeProps,
   routePathToSlug,
-  withZebra,
-} from './utils/helper';
+} from './utils/dataLoader';
+
+export { injectNeosBackendMetadata } from './utils/backendIncludes';
+
+export { withZebra } from './utils/config';
 
 export {
   useNode,

@@ -13,12 +13,15 @@ dist-ssr
 *.local
 
 api/
-index.d.ts
-index.d.ts.map
-index.js
 lib/
 types/
 utils/
+server/
+index.*
+server.*
+client.*
+
+!/src/**/*
 
 # Editor directories and files
 .vscode/*

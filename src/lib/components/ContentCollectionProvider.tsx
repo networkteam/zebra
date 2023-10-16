@@ -19,7 +19,10 @@ export default function ContentCollectionProvider({ nodeName, children }: Conten
 
   return (
     <NeosContext.Provider value={{ ...neosContext, node: collectionNode }}>
-      {children({ collectionProps, children: <ChildNodes /> })}
+      {children({
+        collectionProps,
+        children: <ChildNodes />,
+      })}
     </NeosContext.Provider>
   );
 }
