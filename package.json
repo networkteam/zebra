@@ -1,6 +1,6 @@
 {
   "name": "@networkteam/zebra",
-  "version": "0.8.0",
+  "version": "0.10.0",
   "author": "networkteam GmbH",
   "license": "MIT",
   "publishConfig": {
@@ -64,6 +64,7 @@
     "*.d.ts*",
     "api",
     "lib",
+    "server",
     "types",
     "utils"
   ]
