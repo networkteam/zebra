@@ -9,6 +9,7 @@ export {
   loadDocumentPropsCached,
   loadPreviewDocumentProps,
   loadPreviewDocumentPropsCached,
+  loadSiteProps,
 } from './server/utils/dataLoader';
 export { resolveCurrentNode, resolveCurrentNodeRecursive } from './server/utils/helper';
 export { useDocumentNode, useEditPreviewMode, useInBackend, useMeta, useNode, useSiteNode } from './server/utils/hooks';
