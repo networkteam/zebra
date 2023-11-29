@@ -3,7 +3,9 @@
 export default function BackendContainer() {
   /*
     This container needs to be present in the DOM on page load for the Neos UI to work.
-    Adding it via useEffect only for preview didn't show it correctly until changing the UI.
+    To prevent hydration errors, we're using dangerouslySetInnerHTML in combination with suppressHydrationWarning for now.
   */
-  return <div id="neos-backend-container"></div>;
+  return (
+    <div dangerouslySetInnerHTML={{ __html: '<div id="neos-backend-container"></div>' }} suppressHydrationWarning />
+  );
 }
