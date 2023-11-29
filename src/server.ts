@@ -1,4 +1,3 @@
-export { default as BackendContainer } from './lib/components/BackendContainer';
 export { default as ContentCollection } from './server/components/ContentCollection';
 export { default as ContentCollectionProvider } from './server/components/ContentCollectionProvider';
 export { default as ContentComponent } from './server/components/ContentComponent';
