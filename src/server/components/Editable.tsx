@@ -1,15 +1,18 @@
+import { ContextProps } from 'src/types';
+
 import { useEditPreviewMode, useInBackend, useNode } from '../utils/hooks';
 
 type EditableProps = {
+  ctx: ContextProps;
   as?: keyof JSX.IntrinsicElements;
   property: string;
   [x: string]: any;
 };
 
-const Editable = async ({ as = 'div', property, ...rest }: EditableProps) => {
-  const inBackend = useInBackend();
-  const loadNode = useNode();
-  const loadEditPreviewMode = useEditPreviewMode();
+const Editable = async ({ ctx, as = 'div', property, ...rest }: EditableProps) => {
+  const inBackend = useInBackend(ctx);
+  const loadNode = useNode(ctx);
+  const loadEditPreviewMode = useEditPreviewMode(ctx);
 
   const node = await loadNode();
   const editPreviewMode = await loadEditPreviewMode();

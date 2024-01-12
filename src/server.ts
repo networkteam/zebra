@@ -4,7 +4,6 @@ export { default as ContentComponent } from './server/components/ContentComponen
 export { default as ContentComponentProvider } from './server/components/ContentComponentProvider';
 export { default as Editable } from './server/components/Editable';
 export { default as NodeRenderer } from './server/components/NodeRenderer';
-export { NeosServerContext } from './server/utils/context';
 export {
   loadDocumentProps,
   loadDocumentPropsCached,

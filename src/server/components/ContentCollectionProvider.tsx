@@ -1,9 +1,12 @@
+import { ContextProps } from 'src/types';
+
 import { useInBackend } from '../utils/hooks';
 import { useContentCollection } from '../utils/hooks';
 import ContentComponentIncludes from './client/ContentComponentIncludes';
 import NodeRenderer from './NodeRenderer';
 
 type ContentCollectionProviderProps = {
+  ctx: ContextProps;
   nodeName?: string;
   children: ({
     collectionProps,
@@ -14,9 +17,9 @@ type ContentCollectionProviderProps = {
   }) => React.ReactNode;
 };
 
-const ContentCollectionProvider = async ({ nodeName, children }: ContentCollectionProviderProps) => {
-  const inBackend = useInBackend();
-  const { collectionNode, collectionProps } = await useContentCollection(nodeName)();
+const ContentCollectionProvider = async ({ ctx, nodeName, children }: ContentCollectionProviderProps) => {
+  const inBackend = useInBackend(ctx);
+  const { collectionNode, collectionProps } = await useContentCollection(ctx, nodeName)();
 
   if (!collectionNode) {
     return null;
@@ -29,7 +32,7 @@ const ContentCollectionProvider = async ({ nodeName, children }: ContentCollecti
         children: (
           <>
             {collectionNode.children?.map((child) => (
-              <NodeRenderer key={child.identifier} node={child} />
+              <NodeRenderer key={child.identifier} ctx={ctx} node={child} />
             ))}
             {inBackend && (
               <ContentComponentIncludes

@@ -22,7 +22,7 @@
     "build": "yarn clean && yarn tsc --project tsconfig.json && yarn babel --config-file ./config/babel.config.js src --out-dir . --extensions \".tsx,.ts,.js,.jsx\"",
     "clean": "rm -rf index.d.ts index.d.ts.map index.js server.d.ts server.d.ts.map server.js client.d.ts client.d.ts.map client.js api lib types utils server",
     "dev": "yarn clean && yarn watch",
-    "watch": "yarn tsc --project tsconfig.dev.json",
+    "watch": "yarn tsc --project tsconfig.dev.json --watch",
     "lint": "eslint src config"
   },
   "dependencies": {

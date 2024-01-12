@@ -1,8 +1,11 @@
+import { ContextProps } from 'src/types';
+
 import { useInBackend } from '../utils/hooks';
 import { useContentComponent } from '../utils/hooks';
 import ContentComponentIncludes from './client/ContentComponentIncludes';
 
 type ContentComponentProviderProps = {
+  ctx: ContextProps;
   children: ({
     componentProps,
     includes,
@@ -12,9 +15,9 @@ type ContentComponentProviderProps = {
   }) => React.ReactNode;
 };
 
-const ContentComponentProvider = async ({ children }: ContentComponentProviderProps) => {
-  const inBackend = useInBackend();
-  const { componentNode, componentProps } = await useContentComponent()();
+const ContentComponentProvider = async ({ ctx, children }: ContentComponentProviderProps) => {
+  const inBackend = useInBackend(ctx);
+  const { componentNode, componentProps } = await useContentComponent(ctx)();
 
   if (!componentNode) {
     return null;

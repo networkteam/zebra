@@ -1,16 +1,19 @@
+import { ContextProps } from 'src/types';
+
 import ContentComponentProvider from './ContentComponentProvider';
 
 type ContentComponentProps = {
+  ctx: ContextProps;
   as?: keyof JSX.IntrinsicElements;
   children: React.ReactNode;
   [x: string]: any;
 };
 
-const ContentComponent = async ({ as = 'div', children, ...rest }: ContentComponentProps) => {
+const ContentComponent = async ({ ctx, as = 'div', children, ...rest }: ContentComponentProps) => {
   const Component = as;
 
   return (
-    <ContentComponentProvider>
+    <ContentComponentProvider ctx={ctx}>
       {({ componentProps, includes }) => (
         <Component {...componentProps} {...rest}>
           {children}
