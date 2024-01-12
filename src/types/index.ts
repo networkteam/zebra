@@ -114,7 +114,7 @@ export interface ApiErrors {
   errors?: { message: string; code: number }[];
 }
 
-export type NeosServerContextProps = {
+export type ContextProps = {
   routePath?: string;
   contextNodePath?: string;
   inBackend?: boolean;

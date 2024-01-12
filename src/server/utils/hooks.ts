@@ -1,86 +1,73 @@
-import { useContext } from 'react';
+import { ContextProps } from 'src/types';
 
-import { NeosServerContext } from './context';
 import { loadDocumentPropsCached, loadPreviewDocumentPropsCached } from './dataLoader';
 import { resolveCurrentNode } from './helper';
 
-export const useMeta = () => {
-  const neosContext = useContext(NeosServerContext);
-
+export const useMeta = (ctx: ContextProps) => {
   return async () => {
-    const neosData = neosContext.inBackend
-      ? await loadPreviewDocumentPropsCached(neosContext.contextNodePath)
-      : await loadDocumentPropsCached(neosContext.routePath);
+    const neosData = ctx.inBackend
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
+      : await loadDocumentPropsCached(ctx.routePath);
 
     return neosData?.meta;
   };
 };
 
-export const useNode = () => {
-  const neosContext = useContext(NeosServerContext);
-
+export const useNode = (ctx: ContextProps) => {
   return async () => {
-    const neosData = neosContext.inBackend
-      ? await loadPreviewDocumentPropsCached(neosContext.contextNodePath)
-      : await loadDocumentPropsCached(neosContext.routePath);
+    const neosData = ctx.inBackend
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
+      : await loadDocumentPropsCached(ctx.routePath);
 
     if (!neosData) {
       return undefined;
     }
 
-    const node = resolveCurrentNode(neosContext, neosData);
+    const node = resolveCurrentNode(ctx, neosData);
 
     return node;
   };
 };
 
-export const useDocumentNode = () => {
-  const neosContext = useContext(NeosServerContext);
-
+export const useDocumentNode = (ctx: ContextProps) => {
   return async () => {
-    const neosData = neosContext.inBackend
-      ? await loadPreviewDocumentPropsCached(neosContext.contextNodePath)
-      : await loadDocumentPropsCached(neosContext.routePath);
+    const neosData = ctx.inBackend
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
+      : await loadDocumentPropsCached(ctx.routePath);
 
     return neosData?.node;
   };
 };
 
-export const useSiteNode = () => {
-  const neosContext = useContext(NeosServerContext);
-
+export const useSiteNode = (ctx: ContextProps) => {
   return async () => {
-    const neosData = neosContext.inBackend
-      ? await loadPreviewDocumentPropsCached(neosContext.contextNodePath)
-      : await loadDocumentPropsCached(neosContext.routePath);
+    const neosData = ctx.inBackend
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
+      : await loadDocumentPropsCached(ctx.routePath);
 
     return neosData?.site;
   };
 };
 
-export const useInBackend = () => {
-  const neosContext = useContext(NeosServerContext);
-  return !!neosContext?.inBackend;
+export const useInBackend = (ctx: ContextProps) => {
+  return !!ctx?.inBackend;
 };
 
-export const useEditPreviewMode = () => {
-  const neosContext = useContext(NeosServerContext);
-
+export const useEditPreviewMode = (ctx: ContextProps) => {
   return async () => {
-    const neosData = await loadPreviewDocumentPropsCached(neosContext.contextNodePath);
+    const neosData = await loadPreviewDocumentPropsCached(ctx.contextNodePath);
 
     return neosData?.backend?.editPreviewMode;
   };
 };
 
-export const useContentCollection = (nodeName?: string) => {
-  const inBackend = useInBackend();
-  const neosContext = useContext(NeosServerContext);
+export const useContentCollection = (ctx: ContextProps, nodeName?: string) => {
+  const inBackend = useInBackend(ctx);
 
   return async () => {
     const neosData = inBackend
-      ? await loadPreviewDocumentPropsCached(neosContext.contextNodePath)
-      : await loadDocumentPropsCached(neosContext.routePath);
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
+      : await loadDocumentPropsCached(ctx.routePath);
 
     if (!neosData) {
       return {
@@ -89,7 +76,7 @@ export const useContentCollection = (nodeName?: string) => {
       };
     }
 
-    const currentNode = resolveCurrentNode(neosContext, neosData);
+    const currentNode = resolveCurrentNode(ctx, neosData);
     const collectionNode = nodeName ? currentNode?.children?.find((child) => child.nodeName === nodeName) : currentNode;
 
     if (!collectionNode) {
@@ -111,11 +98,11 @@ export const useContentCollection = (nodeName?: string) => {
   };
 };
 
-export const useContentComponent = () => {
-  const inBackend = useInBackend();
+export const useContentComponent = (ctx: ContextProps) => {
+  const inBackend = useInBackend(ctx);
 
   return async () => {
-    const node = await useNode()();
+    const node = await useNode(ctx)();
 
     if (!node) {
       return {

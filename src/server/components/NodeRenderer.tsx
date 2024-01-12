@@ -1,17 +1,17 @@
-import { useContext } from 'react';
-
-import { NeosContentNode } from '../../types';
-import { NeosServerContext } from '../utils/context';
+import { ContextProps, NeosContentNode } from '../../types';
 import { loadDocumentPropsCached, loadPreviewDocumentPropsCached } from '../utils/dataLoader';
 import { getNodeType } from '../utils/nodeTypes';
 
-const NodeRenderer = async ({ node }: { node: NeosContentNode }) => {
-  const neosContext = useContext(NeosServerContext);
+type NodeRendererProps = {
+  ctx: ContextProps;
+  node: NeosContentNode;
+};
 
+const NodeRenderer = async ({ ctx, node }: NodeRendererProps) => {
   // We just fetch again and hope it will be cached
-  const neosData = neosContext.inBackend
-    ? await loadPreviewDocumentPropsCached(neosContext.contextNodePath)
-    : await loadDocumentPropsCached(neosContext.routePath);
+  const neosData = ctx.inBackend
+    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
+    : await loadDocumentPropsCached(ctx.routePath);
 
   if (!neosData) {
     return <div>Could not load data</div>;
@@ -24,14 +24,13 @@ const NodeRenderer = async ({ node }: { node: NeosContentNode }) => {
   }
 
   return (
-    <NeosServerContext.Provider
-      value={{
-        ...neosContext,
+    <Component
+      ctx={{
+        ...ctx,
+        contextNodePath: node.contextPath,
         currentNodeIdentifier: node.identifier,
       }}
-    >
-      <Component />
-    </NeosServerContext.Provider>
+    />
   );
 };
 
