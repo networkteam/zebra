@@ -80,7 +80,7 @@ export interface BackendEditPreviewMode {
   options: Record<string, any> | null;
 }
 
-export type NeosNodeTypes = Record<string, React.FC>;
+export type NeosNodeTypes = Record<string, React.FC<{ ctx: ContextProps }>>;
 
 export interface NeosContextProps {
   node: NeosContentNode;
