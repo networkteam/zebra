@@ -23,7 +23,8 @@
     "clean": "rm -rf index.d.ts index.d.ts.map index.js server.d.ts server.d.ts.map server.js client.d.ts client.d.ts.map client.js api lib types utils server",
     "dev": "yarn clean && yarn watch",
     "watch": "yarn tsc --project tsconfig.dev.json --watch",
-    "lint": "eslint src config"
+    "lint": "eslint src config",
+    "test": "vitest"
   },
   "dependencies": {
     "@babel/runtime": "^7.20.13",
@@ -49,9 +50,10 @@
     "eslint-plugin-simple-import-sort": "^8.0.0",
     "next": "^13.4.0",
     "prettier": "^2.7.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "typescript": "^5.1.0"
+    "react": "18.3.0-canary-b2d637128-20240123",
+    "react-dom": "18.3.0-canary-b2d637128-20240123",
+    "typescript": "^5.1.0",
+    "vitest": "^1.2.1"
   },
   "peerDependencies": {
     "next": "^12.2.0 || ^13.0.0 || ^14.0.0",

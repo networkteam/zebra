@@ -12,14 +12,14 @@ dist
 dist-ssr
 *.local
 
-api/
-lib/
-types/
-utils/
-server/
-index.*
-server.*
-client.*
+/api/
+/lib/
+/types/
+/utils/
+/server/
+/index.*
+/server.*
+/client.*
 
 !/src/**/*
 
