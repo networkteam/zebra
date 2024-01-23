@@ -121,3 +121,20 @@ export type ContextProps = {
   documentNodeIdentifier?: string;
   currentNodeIdentifier?: string;
 };
+
+export type DataLoaderOptions = {
+  /**
+   * If true, the data loader will not throw an error if the content API base URL is not set and no data can be fetched.
+   */
+  optional?: boolean;
+
+  /**
+   * The fetch request cache mode to use.
+   */
+  cache?: RequestCache;
+
+  /**
+   * The Next fetch request config for revalidation and tags.
+   */
+  next?: NextFetchRequestConfig;
+};

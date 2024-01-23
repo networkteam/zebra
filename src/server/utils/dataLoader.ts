@@ -2,13 +2,15 @@ import log from 'loglevel';
 import { headers as nextHeaders } from 'next/headers';
 import { cache } from 'react';
 
-import { ApiErrors, NeosData, SiteData } from '../../types';
+import { ApiErrors, DataLoaderOptions, NeosData, SiteData } from '../../types';
 
 log.setDefaultLevel(log.levels.DEBUG);
 
-// TODO Add explicit cache configuration for cached / uncached
-export const loadDocumentProps = async (params: { slug: string | string[] }) => {
+export const loadDocumentProps = async (params: { slug: string | string[] }, opts?: DataLoaderOptions) => {
   const apiUrl = process.env.NEOS_BASE_URL;
+  if (!apiUrl && opts?.optional) {
+    return undefined;
+  }
   if (!apiUrl) {
     throw new Error('Missing NEOS_BASE_URL environment variable');
   }
@@ -28,7 +30,8 @@ export const loadDocumentProps = async (params: { slug: string | string[] }) => 
 
   const response = await fetch(fetchUrl, {
     headers: buildNeosHeaders(),
-    cache: 'no-store',
+    cache: opts?.cache ?? 'no-store',
+    next: opts?.next,
   });
 
   if (!response.ok) {
@@ -42,8 +45,7 @@ export const loadDocumentProps = async (params: { slug: string | string[] }) => 
     if (data.errors) {
       const flatErrors = data.errors.map((e) => e.message).join(', ');
       log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
-
-      return undefined;
+      throw new Error('Content API responded with error: ' + flatErrors);
     }
   }
 
@@ -54,8 +56,14 @@ export const loadDocumentProps = async (params: { slug: string | string[] }) => 
   return data;
 };
 
-export const loadPreviewDocumentProps = async (searchParams: { [key: string]: string | string[] | undefined }) => {
+export const loadPreviewDocumentProps = async (
+  searchParams: { [key: string]: string | string[] | undefined },
+  opts?: DataLoaderOptions
+) => {
   const apiUrl = process.env.NEOS_BASE_URL;
+  if (!apiUrl && opts?.optional) {
+    return undefined;
+  }
   if (!apiUrl) {
     throw new Error('Missing NEOS_BASE_URL environment variable');
   }
@@ -83,8 +91,7 @@ export const loadPreviewDocumentProps = async (searchParams: { [key: string]: st
     if (data.errors) {
       const flatErrors = data.errors.map((e) => e.message).join(', ');
       log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
-
-      return undefined;
+      throw new Error('Content API responded with error: ' + flatErrors);
     }
   }
 
@@ -95,22 +102,22 @@ export const loadPreviewDocumentProps = async (searchParams: { [key: string]: st
   return data;
 };
 
-export const loadDocumentPropsCached = cache((routePath: string | undefined) => {
+export const loadDocumentPropsCached = cache((routePath: string | undefined, opts?: DataLoaderOptions) => {
   if (!routePath) {
     return undefined;
   }
   log.debug('fetching data from Neos inside cache with route path', routePath);
   const slug = routePath.split('/').filter((s) => s.length > 0);
-  return loadDocumentProps({ slug });
+  return loadDocumentProps({ slug }, opts);
 });
 
-export const loadPreviewDocumentPropsCached = cache((contextNodePath: string | undefined) => {
+export const loadPreviewDocumentPropsCached = cache((contextNodePath: string | undefined, opts?: DataLoaderOptions) => {
   if (!contextNodePath) {
     return undefined;
   }
   log.debug('fetching data from Neos inside cache with context node path', contextNodePath);
   const searchParams = { 'node[__contextNodePath]': contextNodePath };
-  return loadPreviewDocumentProps(searchParams);
+  return loadPreviewDocumentProps(searchParams, opts);
 });
 
 export const buildNeosHeaders = () => {
@@ -124,8 +131,11 @@ export const buildNeosHeaders = () => {
   return headers;
 };
 
-export const loadSiteProps = async () => {
+export const loadSiteProps = async (opts?: DataLoaderOptions) => {
   const apiUrl = process.env.NEOS_BASE_URL;
+  if (!apiUrl && opts?.optional) {
+    return undefined;
+  }
   if (!apiUrl) {
     throw new Error('Missing NEOS_BASE_URL environment variable');
   }
@@ -137,7 +147,8 @@ export const loadSiteProps = async () => {
 
   const response = await fetch(fetchUrl, {
     headers: buildNeosHeaders(),
-    cache: 'no-store',
+    cache: opts?.cache ?? 'no-store',
+    next: opts?.next,
   });
 
   if (!response.ok) {
@@ -145,8 +156,7 @@ export const loadSiteProps = async () => {
     if (data.errors) {
       const flatErrors = data.errors.map((e) => e.message).join(', ');
       log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
-
-      return undefined;
+      throw new Error('Content API responded with error: ' + flatErrors);
     }
   }
 

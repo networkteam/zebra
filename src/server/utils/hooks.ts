@@ -1,23 +1,23 @@
-import { ContextProps } from 'src/types';
+import { ContextProps, DataLoaderOptions } from 'src/types';
 
 import { loadDocumentPropsCached, loadPreviewDocumentPropsCached } from './dataLoader';
 import { resolveCurrentNode } from './helper';
 
-export const useMeta = (ctx: ContextProps) => {
+export const useMeta = (ctx: ContextProps, opts?: DataLoaderOptions) => {
   return async () => {
     const neosData = ctx.inBackend
-      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
-      : await loadDocumentPropsCached(ctx.routePath);
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts)
+      : await loadDocumentPropsCached(ctx.routePath, opts);
 
     return neosData?.meta;
   };
 };
 
-export const useNode = (ctx: ContextProps) => {
+export const useNode = (ctx: ContextProps, opts?: DataLoaderOptions) => {
   return async () => {
     const neosData = ctx.inBackend
-      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
-      : await loadDocumentPropsCached(ctx.routePath);
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts)
+      : await loadDocumentPropsCached(ctx.routePath, opts);
 
     if (!neosData) {
       return undefined;
@@ -29,21 +29,21 @@ export const useNode = (ctx: ContextProps) => {
   };
 };
 
-export const useDocumentNode = (ctx: ContextProps) => {
+export const useDocumentNode = (ctx: ContextProps, opts?: DataLoaderOptions) => {
   return async () => {
     const neosData = ctx.inBackend
-      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
-      : await loadDocumentPropsCached(ctx.routePath);
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts)
+      : await loadDocumentPropsCached(ctx.routePath, opts);
 
     return neosData?.node;
   };
 };
 
-export const useSiteNode = (ctx: ContextProps) => {
+export const useSiteNode = (ctx: ContextProps, opts?: DataLoaderOptions) => {
   return async () => {
     const neosData = ctx.inBackend
-      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
-      : await loadDocumentPropsCached(ctx.routePath);
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts)
+      : await loadDocumentPropsCached(ctx.routePath, opts);
 
     return neosData?.site;
   };
@@ -53,21 +53,21 @@ export const useInBackend = (ctx: ContextProps) => {
   return !!ctx?.inBackend;
 };
 
-export const useEditPreviewMode = (ctx: ContextProps) => {
+export const useEditPreviewMode = (ctx: ContextProps, opts?: DataLoaderOptions) => {
   return async () => {
-    const neosData = await loadPreviewDocumentPropsCached(ctx.contextNodePath);
+    const neosData = await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts);
 
     return neosData?.backend?.editPreviewMode;
   };
 };
 
-export const useContentCollection = (ctx: ContextProps, nodeName?: string) => {
+export const useContentCollection = (ctx: ContextProps, nodeName?: string, opts?: DataLoaderOptions) => {
   const inBackend = useInBackend(ctx);
 
   return async () => {
     const neosData = inBackend
-      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
-      : await loadDocumentPropsCached(ctx.routePath);
+      ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts)
+      : await loadDocumentPropsCached(ctx.routePath, opts);
 
     if (!neosData) {
       return {
@@ -98,11 +98,11 @@ export const useContentCollection = (ctx: ContextProps, nodeName?: string) => {
   };
 };
 
-export const useContentComponent = (ctx: ContextProps) => {
+export const useContentComponent = (ctx: ContextProps, opts?: DataLoaderOptions) => {
   const inBackend = useInBackend(ctx);
 
   return async () => {
-    const node = await useNode(ctx)();
+    const node = await useNode(ctx, opts)();
 
     if (!node) {
       return {
