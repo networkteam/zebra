@@ -12,6 +12,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: yarn
+          registry-url: 'https://registry.npmjs.org'
       - name: Set outputs
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
