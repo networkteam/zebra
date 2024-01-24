@@ -2949,23 +2949,23 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-react-dom@18.3.0-canary-b2d637128-20240123:
-  version "18.3.0-canary-b2d637128-20240123"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.3.0-canary-b2d637128-20240123.tgz#5f31e063da4dc8f4696dd32bd2319c401d5cbc87"
-  integrity sha512-n2EiCdWzI3tt73VgiGiSGIbyOhmpVdD3dTmk5VEmoCHv197Zf+JGJkeHVFQzHQILdrmHYoCZJcXJh0rPZz5fQA==
+react-dom@18.2.0:
+  version "18.2.0"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
+  integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
   dependencies:
     loose-envify "^1.1.0"
-    scheduler "0.24.0-canary-b2d637128-20240123"
+    scheduler "^0.23.0"
 
 react-is@^18.0.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
-react@18.3.0-canary-b2d637128-20240123:
-  version "18.3.0-canary-b2d637128-20240123"
-  resolved "https://registry.yarnpkg.com/react/-/react-18.3.0-canary-b2d637128-20240123.tgz#6c5df9ae8411e90f401a76992f2bfd813a825352"
-  integrity sha512-VHZlpXe57Mtc3CM3GOKazuUof3y7xsL+S8uoE+vQGbSlS4tU+e2gLXc15U+/akw/c4cRqYt8Nl1pqIFpE5cN5Q==
+react@18.2.0:
+  version "18.2.0"
+  resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
+  integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
   dependencies:
     loose-envify "^1.1.0"
 
@@ -3084,10 +3084,10 @@ safe-buffer@~5.1.1:
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
   integrity sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
 
-scheduler@0.24.0-canary-b2d637128-20240123:
-  version "0.24.0-canary-b2d637128-20240123"
-  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.24.0-canary-b2d637128-20240123.tgz#9de9fe5020e7fb76c52819999674a17fe16e87c2"
-  integrity sha512-4DC2OVnTC6JFRcjtx+SNspgR2Eoqlas8oZeWHMgBk3IjrEi7RTVP68iv8lav0w/08P85rJn6R8NKGxd6DYdaUg==
+scheduler@^0.23.0:
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.23.0.tgz#ba8041afc3d30eb206a487b6b384002e4e61fdfe"
+  integrity sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==
   dependencies:
     loose-envify "^1.1.0"
 

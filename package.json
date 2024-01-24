@@ -50,8 +50,8 @@
     "eslint-plugin-simple-import-sort": "^8.0.0",
     "next": "^13.4.0",
     "prettier": "^2.7.1",
-    "react": "18.3.0-canary-b2d637128-20240123",
-    "react-dom": "18.3.0-canary-b2d637128-20240123",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "typescript": "^5.1.0",
     "vitest": "^1.2.1"
   },
