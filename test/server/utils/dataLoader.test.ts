@@ -1,35 +1,47 @@
 import { headers } from 'next/headers';
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 
-import { loadDocumentProps, loadDocumentPropsCached, loadPreviewDocumentProps } from '../../../src/server';
+import {
+  loadDocumentProps,
+  loadDocumentPropsCached,
+  loadPreviewDocumentProps,
+  loadSiteProps,
+} from '../../../src/server';
 import { DataLoaderOptions } from '../../../src/types';
 
 describe('loadDocumentProps', () => {
-  describe('without options', () => {
-    it('should throw an error if NEOS_BASE_URL is not set', async () => {
-      await expect(loadDocumentProps({ slug: 'foo' })).rejects.toThrowError(
-        'Missing NEOS_BASE_URL environment variable'
-      );
+  it('should throw an error if NEOS_BASE_URL is not set', async () => {
+    await expect(loadDocumentProps({ slug: 'foo' })).rejects.toThrowError('Missing NEOS_BASE_URL environment variable');
+  });
+
+  describe('with NEOS_BASE_URL set', () => {
+    beforeEach(() => {
+      vi.stubEnv('NEOS_BASE_URL', 'http://neos:1234');
     });
 
-    describe('with NEOS_BASE_URL set', () => {
-      beforeEach(() => {
-        vi.stubEnv('NEOS_BASE_URL', 'http://neos:1234');
-      });
-
+    describe.each<{ opts?: DataLoaderOptions; expectedFetchConfig: RequestInit }>([
+      // No options
+      { expectedFetchConfig: { cache: 'no-store', headers: {}, next: undefined } },
+      // Specify cache
+      { opts: { cache: 'default' }, expectedFetchConfig: { cache: 'default', headers: {}, next: undefined } },
+      // Specify cache and next tags
+      {
+        opts: { cache: 'force-cache', next: { tags: ['neos'] } },
+        expectedFetchConfig: { cache: 'force-cache', headers: {}, next: { tags: ['neos'] } },
+      },
+    ])('with options $opts', ({ opts, expectedFetchConfig }) => {
       it('should fetch from configured API', async () => {
         const fetch = vi.fn().mockResolvedValue(createOkayFetchResponse({ meta: { title: 'Foo' } }));
         vi.stubGlobal('fetch', fetch);
 
-        await expect(loadDocumentProps({ slug: 'foo' })).resolves.toStrictEqual({
+        await expect(loadDocumentProps({ slug: 'foo' }, opts)).resolves.toStrictEqual({
           meta: { title: 'Foo' },
         });
 
-        expect(fetch).toHaveBeenCalledWith('http://neos:1234/neos/content-api/document?path=%2Ffoo', {
-          cache: 'no-store',
-          headers: {},
-          next: undefined,
-        });
+        expect(fetch).toHaveBeenCalledWith(
+          'http://neos:1234/neos/content-api/document?path=%2Ffoo',
+          expectedFetchConfig
+        );
       });
     });
   });
@@ -122,6 +134,44 @@ describe('loadPreviewDocumentProps', () => {
     });
   });
 });
+
+describe('loadSiteProps', () => {
+  it('should throw an error if NEOS_BASE_URL is not set', async () => {
+    await expect(loadSiteProps()).rejects.toThrowError('Missing NEOS_BASE_URL environment variable');
+  });
+
+  describe('with NEOS_BASE_URL set', () => {
+    beforeEach(() => {
+      vi.stubEnv('NEOS_BASE_URL', 'http://neos:1234');
+    });
+
+    describe.each<{ opts?: DataLoaderOptions; expectedFetchConfig: RequestInit }>([
+      // No options
+      { expectedFetchConfig: { cache: 'no-store', headers: {}, next: undefined } },
+      // Override cache
+      { opts: { cache: 'default' }, expectedFetchConfig: { cache: 'default', headers: {}, next: undefined } },
+    ])('with options $opts', ({ opts, expectedFetchConfig }) => {
+      it('should fetch from configured API', async () => {
+        const fetch = vi.fn().mockResolvedValue(createOkayFetchResponse({ meta: { title: 'Foo' } }));
+        vi.stubGlobal('fetch', fetch);
+
+        await expect(loadSiteProps(opts)).resolves.toStrictEqual({
+          meta: { title: 'Foo' },
+        });
+
+        expect(fetch).toHaveBeenCalledWith('http://neos:1234/neos/content-api/site', expectedFetchConfig);
+      });
+    });
+  });
+
+  describe('with optional option', () => {
+    test('should not throw an error if NEOS_BASE_URL is not set', async () => {
+      await expect(loadSiteProps({ optional: true })).resolves.toBeUndefined();
+    });
+  });
+});
+
+// --- Mock implementations ---
 
 let reactCached = false;
 

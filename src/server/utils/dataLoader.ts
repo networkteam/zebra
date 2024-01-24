@@ -131,7 +131,7 @@ export const buildNeosHeaders = () => {
   return headers;
 };
 
-export const loadSiteProps = async (opts?: DataLoaderOptions) => {
+export const loadSiteProps = async <CustomSiteData extends SiteData = SiteData>(opts?: DataLoaderOptions) => {
   const apiUrl = process.env.NEOS_BASE_URL;
   if (!apiUrl && opts?.optional) {
     return undefined;
@@ -160,7 +160,7 @@ export const loadSiteProps = async (opts?: DataLoaderOptions) => {
     }
   }
 
-  const data: SiteData = await response.json();
+  const data: CustomSiteData = await response.json();
   const endTime = Date.now();
   log.debug('fetched data from content API with url', fetchUrl, ', took', `${endTime - startTime}ms`);
 
