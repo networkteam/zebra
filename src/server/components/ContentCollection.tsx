@@ -1,5 +1,4 @@
-import { ContextProps } from 'src/types';
-
+import { ContextProps } from '../../types';
 import { useInBackend } from '../utils/hooks';
 import ContentCollectionProvider from './ContentCollectionProvider';
 

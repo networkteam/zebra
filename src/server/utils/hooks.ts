@@ -1,5 +1,4 @@
-import { ContextProps, DataLoaderOptions } from 'src/types';
-
+import { ContextProps, DataLoaderOptions } from '../../types';
 import { loadDocumentPropsCached, loadPreviewDocumentPropsCached } from './dataLoader';
 import { resolveCurrentNode } from './helper';
 

@@ -1,5 +1,4 @@
-import { ContextProps } from 'src/types';
-
+import { ContextProps } from '../../types';
 import ContentComponentProvider from './ContentComponentProvider';
 
 type ContentComponentProps = {
