@@ -124,11 +124,6 @@ export type ContextProps = {
 
 export type DataLoaderOptions = {
   /**
-   * If true, the data loader will not throw an error if the content API base URL is not set and no data can be fetched.
-   */
-  optional?: boolean;
-
-  /**
    * The fetch request cache mode to use.
    */
   cache?: RequestCache;
@@ -137,4 +132,11 @@ export type DataLoaderOptions = {
    * The Next fetch request config for revalidation and tags.
    */
   next?: NextFetchRequestConfig;
+};
+
+export type OptionalOption = {
+  /**
+   * If true, the data loader will not throw an error if the content API base URL is not set and no data can be fetched.
+   */
+  optional?: boolean;
 };

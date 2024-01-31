@@ -21,5 +21,12 @@ export {
   useMeta,
   useNode,
   useSiteNode,
+  withContentCollection,
+  withContentComponent,
+  withDocumentNode,
+  withEditPreviewMode,
+  withMeta,
+  withNode,
+  withSiteNode,
 } from './server/utils/hooks';
 export { getNodeType, initNodeTypes } from './server/utils/nodeTypes';

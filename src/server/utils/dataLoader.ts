@@ -2,11 +2,14 @@ import log from 'loglevel';
 import { headers as nextHeaders } from 'next/headers';
 import { cache } from 'react';
 
-import { ApiErrors, DataLoaderOptions, NeosData, SiteData } from '../../types';
+import { ApiErrors, DataLoaderOptions, NeosData, OptionalOption, SiteData } from '../../types';
 
 log.setDefaultLevel(log.levels.DEBUG);
 
-export const loadDocumentProps = async (params: { slug: string | string[] }, opts?: DataLoaderOptions) => {
+export const loadDocumentProps = async (
+  params: { slug: string | string[] },
+  opts?: DataLoaderOptions & OptionalOption
+) => {
   const apiUrl = process.env.NEOS_BASE_URL;
   if (!apiUrl && opts?.optional) {
     return undefined;
@@ -58,7 +61,7 @@ export const loadDocumentProps = async (params: { slug: string | string[] }, opt
 
 export const loadPreviewDocumentProps = async (
   searchParams: { [key: string]: string | string[] | undefined },
-  opts?: DataLoaderOptions
+  opts?: DataLoaderOptions & OptionalOption
 ) => {
   const apiUrl = process.env.NEOS_BASE_URL;
   if (!apiUrl && opts?.optional) {
@@ -102,23 +105,27 @@ export const loadPreviewDocumentProps = async (
   return data;
 };
 
-export const loadDocumentPropsCached = cache((routePath: string | undefined, opts?: DataLoaderOptions) => {
-  if (!routePath) {
-    return undefined;
+export const loadDocumentPropsCached = cache(
+  (routePath: string | undefined, opts?: DataLoaderOptions & OptionalOption) => {
+    if (!routePath) {
+      return undefined;
+    }
+    log.debug('fetching data from Neos inside cache with route path', routePath);
+    const slug = routePath.split('/').filter((s) => s.length > 0);
+    return loadDocumentProps({ slug }, opts);
   }
-  log.debug('fetching data from Neos inside cache with route path', routePath);
-  const slug = routePath.split('/').filter((s) => s.length > 0);
-  return loadDocumentProps({ slug }, opts);
-});
+);
 
-export const loadPreviewDocumentPropsCached = cache((contextNodePath: string | undefined, opts?: DataLoaderOptions) => {
-  if (!contextNodePath) {
-    return undefined;
+export const loadPreviewDocumentPropsCached = cache(
+  (contextNodePath: string | undefined, opts?: DataLoaderOptions & OptionalOption) => {
+    if (!contextNodePath) {
+      return undefined;
+    }
+    log.debug('fetching data from Neos inside cache with context node path', contextNodePath);
+    const searchParams = { 'node[__contextNodePath]': contextNodePath };
+    return loadPreviewDocumentProps(searchParams, opts);
   }
-  log.debug('fetching data from Neos inside cache with context node path', contextNodePath);
-  const searchParams = { 'node[__contextNodePath]': contextNodePath };
-  return loadPreviewDocumentProps(searchParams, opts);
-});
+);
 
 export const buildNeosHeaders = () => {
   const headers: Record<string, string> = {};
@@ -131,7 +138,9 @@ export const buildNeosHeaders = () => {
   return headers;
 };
 
-export const loadSiteProps = async <CustomSiteData extends SiteData = SiteData>(opts?: DataLoaderOptions) => {
+export const loadSiteProps = async <CustomSiteData extends SiteData = SiteData>(
+  opts?: DataLoaderOptions & OptionalOption
+) => {
   const apiUrl = process.env.NEOS_BASE_URL;
   if (!apiUrl && opts?.optional) {
     return undefined;
