@@ -100,27 +100,24 @@ Component for a basic document page:
 ```tsx
 import {
   ContentCollection,
-  ContentComponent,
-  NeosContentNode,
-  NeosContext,
-  useMeta,
-  useSiteNode,
-} from '@networkteam/zebra';
-import { useContext } from 'react';
+  withMeta,
+} from '@networkteam/zebra/server';
 
 import Header from './partials/Header';
 
-const DocumentPage = () => {
-  const meta = useMeta();
+const DocumentPage = async ({ ctx }: { ctx: ContextProps }) => {
+  const meta = withMeta(ctx);
+  const inBackend = ctx.inBackend;
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header
         mainNavigation={meta?.mainNavigation}
+        inBackend={inBackend}
       />
 
       <main className="flex grow flex-col justify-between">
-        <ContentCollection className="grow" nodeName="main" />
+        <ContentCollection className="grow" nodeName="main" ctx={ctx} />
       </main>
     </div>
   );
@@ -167,16 +164,20 @@ export default Headline;
 Integrational component for a headline:
 
 ```tsx
-import { ContentComponent, Editable, useNode } from '@networkteam/zebra';
+import { ContextProps } from '@networkteam/zebra';
+import { ContentComponent, Editable, withNode } from '@networkteam/zebra/server';
+
+import { baseClasses } from '@/lib/utils/baseClasses';
 
 import Headline from '../ui/Headline';
 
-const ContentHeadline = () => {
-  const node = useNode();
+const ContentHeadline = async ({ ctx }: { ctx: ContextProps }) => {
+  const node = await withNode(ctx);
+
   return (
-    <ContentComponent>
-      <Headline as={node.properties.hierarchy} size={node.properties.size}>
-        <Editable property="title" />
+    <ContentComponent ctx={ctx} className={baseClasses(node)}>
+      <Headline as={node.properties?.hierarchy} size={node.properties?.size}>
+        <Editable ctx={ctx} property="title" />
       </Headline>
     </ContentComponent>
   );
