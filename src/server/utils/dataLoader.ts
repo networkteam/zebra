@@ -3,6 +3,7 @@ import { headers as nextHeaders } from 'next/headers';
 import { cache } from 'react';
 
 import { ApiErrors, DataLoaderOptions, NeosData, OptionalOption, SiteData } from '../../types';
+import ApiError from './ApiError';
 
 log.setDefaultLevel(log.levels.DEBUG);
 
@@ -44,12 +45,7 @@ export const loadDocumentProps = async (
       return undefined;
     }
 
-    const data: ApiErrors = await response.json();
-    if (data.errors) {
-      const flatErrors = data.errors.map((e) => e.message).join(', ');
-      log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
-      throw new Error('Content API responded with error: ' + flatErrors);
-    }
+    await handleNotOkResponse(response, fetchUrl);
   }
 
   const data: NeosData = await response.json();
@@ -90,12 +86,7 @@ export const loadPreviewDocumentProps = async (
       return undefined;
     }
 
-    const data: ApiErrors = await response.json();
-    if (data.errors) {
-      const flatErrors = data.errors.map((e) => e.message).join(', ');
-      log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
-      throw new Error('Content API responded with error: ' + flatErrors);
-    }
+    await handleNotOkResponse(response, fetchUrl);
   }
 
   const data: NeosData = await response.json();
@@ -104,6 +95,25 @@ export const loadPreviewDocumentProps = async (
 
   return data;
 };
+
+async function handleNotOkResponse(response: Response, fetchUrl: string): Promise<never> {
+  try {
+    const data: ApiErrors = await response.json();
+    if (data.errors) {
+      throw new ApiError('Content API responded with errors', response.status, fetchUrl, data.errors);
+    }
+  } catch (e) {
+    // Ignore any error if response is not JSON
+  }
+
+  throw new ApiError(
+    'Content API responded with unexpected error',
+    response.status,
+    fetchUrl,
+    undefined,
+    await response.text()
+  );
+}
 
 export const loadDocumentPropsCached = cache(
   (routePath: string | undefined, opts?: DataLoaderOptions & OptionalOption) => {

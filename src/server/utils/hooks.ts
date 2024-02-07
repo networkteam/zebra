@@ -79,6 +79,9 @@ export const withSiteNode = async (ctx: ContextProps, opts?: DataLoaderOptions) 
   return neosData.site;
 };
 
+/**
+ * @deprecated Use ctx.inBackend instead (async hooks are not allowed by ESLint rules)
+ */
 export const useInBackend = (ctx: ContextProps) => {
   return !!ctx?.inBackend;
 };

@@ -44,6 +44,15 @@ describe('loadDocumentProps', () => {
         );
       });
     });
+
+    describe('with error not as JSON', () => {
+      it('should throw an error with the response status text', async () => {
+        const fetch = vi.fn().mockResolvedValue(createNotOkJsonErrorFetchResponse());
+        vi.stubGlobal('fetch', fetch);
+
+        await expect(loadDocumentProps({ slug: 'foo' })).rejects.toThrowErrorMatchingSnapshot();
+      });
+    });
   });
 
   describe('with optional option', () => {
@@ -129,6 +138,17 @@ describe('loadPreviewDocumentProps', () => {
               next: undefined,
             }
           );
+        });
+      });
+
+      describe('with error not as JSON', () => {
+        it('should throw an error with the response status text', async () => {
+          const fetch = vi.fn().mockResolvedValue(createNotOkJsonErrorFetchResponse());
+          vi.stubGlobal('fetch', fetch);
+
+          await expect(
+            loadPreviewDocumentProps({ 'node[__contextNodePath]': 'foo/bar@user-me' })
+          ).rejects.toThrowErrorMatchingSnapshot();
         });
       });
     });
@@ -217,4 +237,15 @@ afterEach(() => {
 
 function createOkayFetchResponse(data: any) {
   return { ok: true, status: 200, json: () => new Promise((resolve) => resolve(data)) };
+}
+
+function createNotOkJsonErrorFetchResponse() {
+  return {
+    ok: false,
+    status: 500,
+    json: async () => {
+      throw new SyntaxError('Unexpected token < in JSON at position 0');
+    },
+    text: async () => '<html><body>Internal Server Error</body></html>',
+  };
 }

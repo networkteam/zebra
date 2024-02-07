@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`loadDocumentProps > with NEOS_BASE_URL set > with error not as JSON > should throw an error with the response status text 1`] = `[Error: Content API responded with unexpected error, status: 500, url: http://neos:1234/neos/content-api/document?path=%2Ffoo]`;
+
+exports[`loadPreviewDocumentProps > with NEOS_BASE_URL set > with Neos session cookie > with error not as JSON > should throw an error with the response status text 1`] = `[Error: Content API responded with unexpected error, status: 500, url: http://neos:1234/neos/content-api/document?contextPath=foo%2Fbar%40user-me]`;
