@@ -1,6 +1,7 @@
+import { ReactNode } from 'react';
+
 import { ContextProps } from '../../types';
-import { useInBackend } from '../utils/hooks';
-import { useContentCollection } from '../utils/hooks';
+import { withContentCollection } from '../utils/hooks';
 import ContentComponentIncludes from './client/ContentComponentIncludes';
 import NodeRenderer from './NodeRenderer';
 
@@ -12,13 +13,13 @@ type ContentCollectionProviderProps = {
     children,
   }: {
     collectionProps: Record<string, string | boolean | undefined>;
-    children: React.ReactNode;
-  }) => React.ReactNode;
+    children: ReactNode;
+  }) => ReactNode;
 };
 
 const ContentCollectionProvider = async ({ ctx, nodeName, children }: ContentCollectionProviderProps) => {
-  const inBackend = useInBackend(ctx);
-  const { collectionNode, collectionProps } = await useContentCollection(ctx, nodeName)();
+  const inBackend = ctx.inBackend;
+  const { collectionNode, collectionProps } = await withContentCollection(ctx, nodeName);
 
   if (!collectionNode) {
     return null;

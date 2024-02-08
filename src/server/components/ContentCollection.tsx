@@ -1,5 +1,4 @@
 import { ContextProps } from '../../types';
-import { useInBackend } from '../utils/hooks';
 import ContentCollectionProvider from './ContentCollectionProvider';
 
 type ContentCollectionProps = {
@@ -10,7 +9,7 @@ type ContentCollectionProps = {
 };
 
 const ContentCollection = async ({ ctx, as = 'div', nodeName, ...rest }: ContentCollectionProps) => {
-  const inBackend = useInBackend(ctx);
+  const inBackend = ctx.inBackend;
 
   const { className, ...restAttributes } = rest;
   const Component = as;

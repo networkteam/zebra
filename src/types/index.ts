@@ -1,3 +1,5 @@
+import { FC } from 'react';
+
 declare global {
   interface Document {
     __isInitialized?: boolean;
@@ -80,7 +82,7 @@ export interface BackendEditPreviewMode {
   options: Record<string, any> | null;
 }
 
-export type NeosNodeTypes = Record<string, React.FC<{ ctx: ContextProps }>>;
+export type NeosNodeTypes = Record<string, FC<{ ctx: ContextProps }>>;
 
 export interface NeosContextProps {
   node: NeosContentNode;

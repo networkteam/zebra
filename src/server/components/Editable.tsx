@@ -1,5 +1,5 @@
 import { ContextProps } from '../../types';
-import { useEditPreviewMode, useInBackend, useNode } from '../utils/hooks';
+import { withEditPreviewMode, withNode } from '../utils/hooks';
 
 type EditableProps = {
   ctx: ContextProps;
@@ -9,12 +9,10 @@ type EditableProps = {
 };
 
 const Editable = async ({ ctx, as = 'div', property, ...rest }: EditableProps) => {
-  const inBackend = useInBackend(ctx);
-  const loadNode = useNode(ctx);
-  const loadEditPreviewMode = useEditPreviewMode(ctx);
+  const inBackend = ctx.inBackend;
 
-  const node = await loadNode();
-  const editPreviewMode = await loadEditPreviewMode();
+  const node = await withNode(ctx);
+  const editPreviewMode = await withEditPreviewMode(ctx);
 
   if (!node) {
     return null;

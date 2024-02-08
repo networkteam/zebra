@@ -1,6 +1,7 @@
+import { ReactNode } from 'react';
+
 import { ContextProps } from '../../types';
-import { useInBackend } from '../utils/hooks';
-import { useContentComponent } from '../utils/hooks';
+import { withContentComponent } from '../utils/hooks';
 import ContentComponentIncludes from './client/ContentComponentIncludes';
 
 type ContentComponentProviderProps = {
@@ -10,13 +11,13 @@ type ContentComponentProviderProps = {
     includes,
   }: {
     componentProps: Record<string, string | boolean | undefined>;
-    includes: React.ReactNode;
-  }) => React.ReactNode;
+    includes: ReactNode;
+  }) => ReactNode;
 };
 
 const ContentComponentProvider = async ({ ctx, children }: ContentComponentProviderProps) => {
-  const inBackend = useInBackend(ctx);
-  const { componentNode, componentProps } = await useContentComponent(ctx)();
+  const inBackend = ctx.inBackend;
+  const { componentNode, componentProps } = await withContentComponent(ctx);
 
   if (!componentNode) {
     return null;

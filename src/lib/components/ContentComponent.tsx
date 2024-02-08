@@ -1,8 +1,10 @@
+import { ReactNode } from 'react';
+
 import { useContentComponent } from '../../utils/hooks';
 
 type ContentComponentProps = {
   as?: keyof JSX.IntrinsicElements;
-  children: React.ReactNode;
+  children: ReactNode;
   [x: string]: any;
 };
 

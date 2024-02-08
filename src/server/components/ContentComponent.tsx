@@ -1,10 +1,12 @@
+import { ReactNode } from 'react';
+
 import { ContextProps } from '../../types';
 import ContentComponentProvider from './ContentComponentProvider';
 
 type ContentComponentProps = {
   ctx: ContextProps;
   as?: keyof JSX.IntrinsicElements;
-  children: React.ReactNode;
+  children: ReactNode;
   [x: string]: any;
 };
 

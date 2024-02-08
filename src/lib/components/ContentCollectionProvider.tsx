@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 
 import NeosContext from '../../utils/context';
 import { useContentCollection } from '../../utils/hooks';
@@ -11,8 +11,8 @@ type ContentCollectionProviderProps = {
     children,
   }: {
     collectionProps: Record<string, string | boolean | undefined>;
-    children: React.ReactNode;
-  }) => React.ReactNode;
+    children: ReactNode;
+  }) => ReactNode;
 };
 
 export default function ContentCollectionProvider({ nodeName, children }: ContentCollectionProviderProps) {
