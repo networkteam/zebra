@@ -1,5 +1,15 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`loadDocumentProps > with NEOS_BASE_URL set > with error as JSON > should throw an error with the response status text 1`] = `[Error: Content API responded with errors, status: 500, url: http://neos:1234/neos/content-api/document?path=%2Ffoo, errors: Some error]`;
+
 exports[`loadDocumentProps > with NEOS_BASE_URL set > with error not as JSON > should throw an error with the response status text 1`] = `[Error: Content API responded with unexpected error, status: 500, url: http://neos:1234/neos/content-api/document?path=%2Ffoo]`;
 
+exports[`loadDocumentProps > with NEOS_BASE_URL set > with ok but not as JSON > should throw an error with the response status text 1`] = `[Error: Content API responded with invalid JSON: SyntaxError: Unexpected token '<', "<html><bod"... is not valid JSON, status: 200, url: http://neos:1234/neos/content-api/document?path=%2Ffoo]`;
+
+exports[`loadPreviewDocumentProps > with NEOS_BASE_URL set > with Neos session cookie > with error as JSON > should throw an error with the response status text 1`] = `[Error: Content API responded with errors, status: 500, url: http://neos:1234/neos/content-api/document?contextPath=foo%2Fbar%40user-me, errors: Some error]`;
+
 exports[`loadPreviewDocumentProps > with NEOS_BASE_URL set > with Neos session cookie > with error not as JSON > should throw an error with the response status text 1`] = `[Error: Content API responded with unexpected error, status: 500, url: http://neos:1234/neos/content-api/document?contextPath=foo%2Fbar%40user-me]`;
+
+exports[`loadSiteProps > with NEOS_BASE_URL set > with error as JSON > should throw an error with the response status text 1`] = `[Error: Content API responded with errors, status: 500, url: http://neos:1234/neos/content-api/site, errors: Some error]`;
+
+exports[`loadSiteProps > with NEOS_BASE_URL set > with error not as JSON > should throw an error with the response status text 1`] = `[Error: Content API responded with unexpected error, status: 500, url: http://neos:1234/neos/content-api/site]`;

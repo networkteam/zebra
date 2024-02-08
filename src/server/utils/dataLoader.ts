@@ -38,17 +38,13 @@ export const loadDocumentProps = async (
     next: opts?.next,
   });
 
-  if (!response.ok) {
-    if (response.status === 404) {
-      log.debug('content API returned 404 for path', path);
+  if (response.status === 404) {
+    log.debug('content API returned 404 for path', path);
 
-      return undefined;
-    }
-
-    await handleNotOkResponse(response, fetchUrl);
+    return undefined;
   }
 
-  const data: NeosData = await response.json();
+  const data: NeosData = await parseResponse(fetchUrl, response);
   const endTime = Date.now();
   log.debug('fetched data from content API for path', path, ', took', `${endTime - startTime}ms`);
 
@@ -79,41 +75,18 @@ export const loadPreviewDocumentProps = async (
     cache: 'no-store',
   });
 
-  if (!response.ok) {
-    if (response.status === 404) {
-      log.debug('content API returned 404 for context path', contextPath);
+  if (response.status === 404) {
+    log.debug('content API returned 404 for context path', contextPath);
 
-      return undefined;
-    }
-
-    await handleNotOkResponse(response, fetchUrl);
+    return undefined;
   }
 
-  const data: NeosData = await response.json();
+  const data: NeosData = await parseResponse(fetchUrl, response);
   const endTime = Date.now();
   log.debug('fetched data from content API for context path', contextPath, ', took', `${endTime - startTime}ms`);
 
   return data;
 };
-
-async function handleNotOkResponse(response: Response, fetchUrl: string): Promise<never> {
-  try {
-    const data: ApiErrors = await response.json();
-    if (data.errors) {
-      throw new ApiError('Content API responded with errors', response.status, fetchUrl, data.errors);
-    }
-  } catch (e) {
-    // Ignore any error if response is not JSON
-  }
-
-  throw new ApiError(
-    'Content API responded with unexpected error',
-    response.status,
-    fetchUrl,
-    undefined,
-    await response.text()
-  );
-}
 
 export const loadDocumentPropsCached = cache(
   (routePath: string | undefined, opts?: DataLoaderOptions & OptionalOption) => {
@@ -170,21 +143,49 @@ export const loadSiteProps = async <CustomSiteData extends SiteData = SiteData>(
     next: opts?.next,
   });
 
-  if (!response.ok) {
-    const data: ApiErrors = await response.json();
-    if (data.errors) {
-      const flatErrors = data.errors.map((e) => e.message).join(', ');
-      log.error('error fetching from content API with url', fetchUrl, ':', flatErrors);
-      throw new Error('Content API responded with error: ' + flatErrors);
-    }
-  }
-
-  const data: CustomSiteData = await response.json();
+  const data: CustomSiteData = await parseResponse(fetchUrl, response);
   const endTime = Date.now();
   log.debug('fetched data from content API with url', fetchUrl, ', took', `${endTime - startTime}ms`);
 
   return data;
 };
+
+async function parseResponse<T>(fetchUrl: string, response: Response): Promise<T> {
+  if (!response.ok) {
+    return await handleNotOkResponse(response, fetchUrl);
+  }
+
+  const responseBody = await response.text();
+  try {
+    return JSON.parse(responseBody);
+  } catch (e) {
+    throw new ApiError(
+      'Content API responded with invalid JSON: ' + e,
+      response.status,
+      fetchUrl,
+      undefined,
+      responseBody
+    );
+  }
+}
+
+async function handleNotOkResponse(response: Response, fetchUrl: string): Promise<never> {
+  const responseBody = await response.text();
+
+  if (response.headers.get('content-type')?.startsWith('application/json')) {
+    let data: ApiErrors | undefined = undefined;
+    try {
+      data = JSON.parse(responseBody);
+    } catch (e) {
+      // Ignore any error if response is not JSON
+    }
+    if (data?.errors) {
+      throw new ApiError('Content API responded with errors', response.status, fetchUrl, data.errors);
+    }
+  }
+
+  throw new ApiError('Content API responded with unexpected error', response.status, fetchUrl, undefined, responseBody);
+}
 
 export const buildNeosPreviewHeaders = () => {
   const _headers = nextHeaders();

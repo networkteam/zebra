@@ -19,7 +19,10 @@ describe('loadDocumentProps', () => {
       vi.stubEnv('NEOS_BASE_URL', 'http://neos:1234');
     });
 
-    describe.each<{ opts?: DataLoaderOptions; expectedFetchConfig: RequestInit }>([
+    describe.each<{
+      opts?: DataLoaderOptions;
+      expectedFetchConfig: RequestInit & { next?: { tags: string[] } | undefined };
+    }>([
       // No options
       { expectedFetchConfig: { cache: 'no-store', headers: {}, next: undefined } },
       // Specify cache
@@ -45,9 +48,31 @@ describe('loadDocumentProps', () => {
       });
     });
 
+    describe('with ok but not as JSON', () => {
+      it('should throw an error with the response status text', async () => {
+        const fetch = vi.fn().mockResolvedValue(createOkayButNotJsonFetchResponse());
+        vi.stubGlobal('fetch', fetch);
+
+        await expect(loadDocumentProps({ slug: 'foo' })).rejects.toThrowErrorMatchingSnapshot();
+      });
+    });
+
     describe('with error not as JSON', () => {
       it('should throw an error with the response status text', async () => {
-        const fetch = vi.fn().mockResolvedValue(createNotOkJsonErrorFetchResponse());
+        const fetch = vi.fn().mockResolvedValue(createNotOkJsonErrorFetchResponse({ 'Content-Type': 'text/html' }));
+        vi.stubGlobal('fetch', fetch);
+
+        await expect(loadDocumentProps({ slug: 'foo' })).rejects.toThrowErrorMatchingSnapshot();
+      });
+    });
+
+    describe('with error as JSON', () => {
+      it('should throw an error with the response status text', async () => {
+        const fetch = vi
+          .fn()
+          .mockResolvedValue(
+            createNotOkJsonErrorFetchResponse({ 'content-type': 'application/json' }, '{"errors":["Some error"]}')
+          );
         vi.stubGlobal('fetch', fetch);
 
         await expect(loadDocumentProps({ slug: 'foo' })).rejects.toThrowErrorMatchingSnapshot();
@@ -143,7 +168,22 @@ describe('loadPreviewDocumentProps', () => {
 
       describe('with error not as JSON', () => {
         it('should throw an error with the response status text', async () => {
-          const fetch = vi.fn().mockResolvedValue(createNotOkJsonErrorFetchResponse());
+          const fetch = vi.fn().mockResolvedValue(createNotOkJsonErrorFetchResponse({ 'Content-Type': 'text/html' }));
+          vi.stubGlobal('fetch', fetch);
+
+          await expect(
+            loadPreviewDocumentProps({ 'node[__contextNodePath]': 'foo/bar@user-me' })
+          ).rejects.toThrowErrorMatchingSnapshot();
+        });
+      });
+
+      describe('with error as JSON', () => {
+        it('should throw an error with the response status text', async () => {
+          const fetch = vi
+            .fn()
+            .mockResolvedValue(
+              createNotOkJsonErrorFetchResponse({ 'content-type': 'application/json' }, '{"errors":["Some error"]}')
+            );
           vi.stubGlobal('fetch', fetch);
 
           await expect(
@@ -165,7 +205,12 @@ describe('loadSiteProps', () => {
       vi.stubEnv('NEOS_BASE_URL', 'http://neos:1234');
     });
 
-    describe.each<{ opts?: DataLoaderOptions; expectedFetchConfig: RequestInit }>([
+    describe.each<{
+      opts?: DataLoaderOptions;
+      expectedFetchConfig: RequestInit & {
+        next?: { tags: string[] } | undefined;
+      };
+    }>([
       // No options
       { expectedFetchConfig: { cache: 'no-store', headers: {}, next: undefined } },
       // Override cache
@@ -180,6 +225,28 @@ describe('loadSiteProps', () => {
         });
 
         expect(fetch).toHaveBeenCalledWith('http://neos:1234/neos/content-api/site', expectedFetchConfig);
+      });
+    });
+
+    describe('with error not as JSON', () => {
+      it('should throw an error with the response status text', async () => {
+        const fetch = vi.fn().mockResolvedValue(createNotOkJsonErrorFetchResponse({ 'Content-Type': 'text/html' }));
+        vi.stubGlobal('fetch', fetch);
+
+        await expect(loadSiteProps()).rejects.toThrowErrorMatchingSnapshot();
+      });
+    });
+
+    describe('with error as JSON', () => {
+      it('should throw an error with the response status text', async () => {
+        const fetch = vi
+          .fn()
+          .mockResolvedValue(
+            createNotOkJsonErrorFetchResponse({ 'content-type': 'application/json' }, '{"errors":["Some error"]}')
+          );
+        vi.stubGlobal('fetch', fetch);
+
+        await expect(loadSiteProps()).rejects.toThrowErrorMatchingSnapshot();
       });
     });
   });
@@ -236,16 +303,33 @@ afterEach(() => {
 });
 
 function createOkayFetchResponse(data: any) {
-  return { ok: true, status: 200, json: () => new Promise((resolve) => resolve(data)) };
+  return {
+    ok: true,
+    status: 200,
+    json: () => new Promise((resolve) => resolve(data)),
+    text: () => new Promise((resolve) => resolve(JSON.stringify(data))),
+  };
 }
 
-function createNotOkJsonErrorFetchResponse() {
+function createOkayButNotJsonFetchResponse() {
   return {
-    ok: false,
-    status: 500,
+    ok: true,
+    status: 200,
     json: async () => {
       throw new SyntaxError('Unexpected token < in JSON at position 0');
     },
-    text: async () => '<html><body>Internal Server Error</body></html>',
+    text: () => new Promise((resolve) => resolve('<html><body>Some Bad Error</body></html>')),
+  };
+}
+
+function createNotOkJsonErrorFetchResponse(headers?: HeadersInit, responseBody?: string) {
+  return {
+    ok: false,
+    status: 500,
+    headers: new Headers(headers),
+    json: async () => {
+      throw new SyntaxError('Unexpected token < in JSON at position 0');
+    },
+    text: async () => responseBody || '<html><body>Internal Server Error</body></html>',
   };
 }
