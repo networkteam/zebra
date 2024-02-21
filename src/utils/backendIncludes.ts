@@ -8,6 +8,9 @@ export const injectNeosBackendMetadata = (backend: BackendProps | undefined) => 
     createBackendIncludes(backend.guestFrameApplication);
   }
 
+  // Try to unset initialized to perform a re-initialization of the document although it was not unloaded
+  delete document.__isInitialized;
+
   const event = new CustomEvent('Neos.Neos.Ui.ContentReady');
   window.parent.document.dispatchEvent(event);
 
