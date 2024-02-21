@@ -94,6 +94,10 @@ export const useEditPreviewMode = (ctx: ContextProps, opts?: DataLoaderOptions) 
 };
 
 export const withEditPreviewMode = async (ctx: ContextProps, opts?: DataLoaderOptions) => {
+  if (!ctx.inBackend) {
+    return undefined;
+  }
+
   const neosData = await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts);
   if (!neosData) {
     throw new Error(`Document node not found: ${ctx.contextNodePath}`);
@@ -110,7 +114,7 @@ export const useContentCollection = (ctx: ContextProps, nodeName?: string, opts?
 };
 
 export const withContentCollection = async (ctx: ContextProps, nodeName?: string, opts?: DataLoaderOptions) => {
-  const inBackend = useInBackend(ctx);
+  const inBackend = ctx.inBackend;
 
   const currentNode = await withNode(ctx, opts);
 
@@ -138,7 +142,7 @@ export const useContentComponent = (ctx: ContextProps, opts?: DataLoaderOptions)
 };
 
 export const withContentComponent = async (ctx: ContextProps, opts?: DataLoaderOptions) => {
-  const inBackend = useInBackend(ctx);
+  const inBackend = ctx.inBackend;
 
   const node = await withNode(ctx, opts);
 
