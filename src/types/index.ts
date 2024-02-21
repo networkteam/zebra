@@ -122,6 +122,7 @@ export type ContextProps = {
   inBackend?: boolean;
   documentNodeIdentifier?: string;
   currentNodeIdentifier?: string;
+  dataLoaderOptions?: DataLoaderOptions;
 };
 
 export type DataLoaderOptions = {

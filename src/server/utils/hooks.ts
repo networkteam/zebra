@@ -11,8 +11,8 @@ export const useMeta = (ctx: ContextProps, opts?: DataLoaderOptions & OptionalOp
 
 export const withMeta = async (ctx: ContextProps, opts?: DataLoaderOptions) => {
   const neosData = ctx.inBackend
-    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts)
-    : await loadDocumentPropsCached(ctx.routePath, opts);
+    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts ?? ctx.dataLoaderOptions)
+    : await loadDocumentPropsCached(ctx.routePath, opts ?? ctx.dataLoaderOptions);
   if (!neosData) {
     throw new Error(`Node not found: ${ctx.inBackend ? ctx.contextNodePath : ctx.routePath}`);
   }
@@ -29,8 +29,8 @@ export const useNode = (ctx: ContextProps, opts?: DataLoaderOptions & OptionalOp
 
 export const withNode = async (ctx: ContextProps, opts?: DataLoaderOptions) => {
   const neosData = ctx.inBackend
-    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts)
-    : await loadDocumentPropsCached(ctx.routePath, opts);
+    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts ?? ctx.dataLoaderOptions)
+    : await loadDocumentPropsCached(ctx.routePath, opts ?? ctx.dataLoaderOptions);
   if (!neosData) {
     throw new Error(`Document node not found: ${ctx.inBackend ? ctx.contextNodePath : ctx.routePath}`);
   }
@@ -52,8 +52,8 @@ export const useDocumentNode = (ctx: ContextProps, opts?: DataLoaderOptions) => 
 
 export const withDocumentNode = async (ctx: ContextProps, opts?: DataLoaderOptions) => {
   const neosData = ctx.inBackend
-    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts)
-    : await loadDocumentPropsCached(ctx.routePath, opts);
+    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts ?? ctx.dataLoaderOptions)
+    : await loadDocumentPropsCached(ctx.routePath, opts ?? ctx.dataLoaderOptions);
   if (!neosData) {
     throw new Error(`Document node not found: ${ctx.inBackend ? ctx.contextNodePath : ctx.routePath}`);
   }
@@ -70,8 +70,8 @@ export const useSiteNode = (ctx: ContextProps, opts?: DataLoaderOptions) => {
 
 export const withSiteNode = async (ctx: ContextProps, opts?: DataLoaderOptions) => {
   const neosData = ctx.inBackend
-    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts)
-    : await loadDocumentPropsCached(ctx.routePath, opts);
+    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts ?? ctx.dataLoaderOptions)
+    : await loadDocumentPropsCached(ctx.routePath, opts ?? ctx.dataLoaderOptions);
   if (!neosData) {
     throw new Error(`Document node not found: ${ctx.inBackend ? ctx.contextNodePath : ctx.routePath}`);
   }
@@ -98,7 +98,7 @@ export const withEditPreviewMode = async (ctx: ContextProps, opts?: DataLoaderOp
     return undefined;
   }
 
-  const neosData = await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts);
+  const neosData = await loadPreviewDocumentPropsCached(ctx.contextNodePath, opts ?? ctx.dataLoaderOptions);
   if (!neosData) {
     throw new Error(`Document node not found: ${ctx.contextNodePath}`);
   }

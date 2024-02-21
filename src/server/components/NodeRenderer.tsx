@@ -10,8 +10,8 @@ type NodeRendererProps = {
 const NodeRenderer = async ({ ctx, node }: NodeRendererProps) => {
   // We just fetch again and hope it will be cached
   const neosData = ctx.inBackend
-    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath)
-    : await loadDocumentPropsCached(ctx.routePath);
+    ? await loadPreviewDocumentPropsCached(ctx.contextNodePath, ctx.dataLoaderOptions)
+    : await loadDocumentPropsCached(ctx.routePath, ctx.dataLoaderOptions);
 
   if (!neosData) {
     return <div>Could not load data</div>;
@@ -27,7 +27,6 @@ const NodeRenderer = async ({ ctx, node }: NodeRendererProps) => {
     <Component
       ctx={{
         ...ctx,
-        contextNodePath: node.contextPath,
         currentNodeIdentifier: node.identifier,
       }}
     />
