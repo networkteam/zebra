@@ -7,7 +7,7 @@ type EditableProps = {
 };
 
 export default function Editable({ as = 'div', property, ...rest }: EditableProps) {
-  const { properties, nodeType, contextPath } = useNode();
+  const { properties, nodeType, contextPath, backend } = useNode();
   const inBackend = useInBackend();
   const editPreviewMode = useEditPreviewMode();
   const { className, ...restAttributes } = rest;
@@ -26,7 +26,10 @@ export default function Editable({ as = 'div', property, ...rest }: EditableProp
       property={'typo3:' + property}
       data-neos-node-type={nodeType}
       contentEditable
-      dangerouslySetInnerHTML={{ __html: properties[property] }}
+      dangerouslySetInnerHTML={{
+        // Use the actual content from the backend metadata if available to preserve original node and asset URIs
+        __html: backend?.serializedNode?.properties[property] || properties[property] || '',
+      }}
       {...restAttributes}
     />
   );

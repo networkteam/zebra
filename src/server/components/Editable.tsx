@@ -18,7 +18,7 @@ const Editable = async ({ ctx, as = 'div', property, ...rest }: EditableProps) =
     return null;
   }
 
-  const { contextPath, nodeType, properties } = node;
+  const { contextPath, nodeType, properties, backend } = node;
   const { className, ...restAttributes } = rest;
   const Component = as;
 
@@ -35,7 +35,10 @@ const Editable = async ({ ctx, as = 'div', property, ...rest }: EditableProps) =
       property={'typo3:' + property}
       data-neos-node-type={nodeType}
       contentEditable
-      dangerouslySetInnerHTML={{ __html: properties[property] || '' }}
+      dangerouslySetInnerHTML={{
+        // Use the actual content from the backend metadata if available to preserve original node and asset URIs
+        __html: backend?.serializedNode?.properties[property] || properties[property] || '',
+      }}
       {...restAttributes}
     />
   );
