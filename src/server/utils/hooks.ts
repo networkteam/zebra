@@ -17,7 +17,11 @@ export const withMeta = async (ctx: ContextProps, opts?: DataLoaderOptions) => {
     throw new Error(`Node not found: ${ctx.inBackend ? ctx.contextNodePath : ctx.routePath}`);
   }
 
-  return neosData.meta;
+  if ('meta' in neosData) {
+    return neosData.meta;
+  }
+
+  return undefined;
 };
 
 /**
@@ -33,6 +37,9 @@ export const withNode = async (ctx: ContextProps, opts?: DataLoaderOptions) => {
     : await loadDocumentPropsCached(ctx.routePath, opts ?? ctx.dataLoaderOptions);
   if (!neosData) {
     throw new Error(`Document node not found: ${ctx.inBackend ? ctx.contextNodePath : ctx.routePath}`);
+  }
+  if ('redirect' in neosData) {
+    throw new Error(`Redirect found for node at path: ${ctx.routePath}`);
   }
 
   const node = resolveCurrentNode(ctx, neosData);
@@ -57,6 +64,9 @@ export const withDocumentNode = async (ctx: ContextProps, opts?: DataLoaderOptio
   if (!neosData) {
     throw new Error(`Document node not found: ${ctx.inBackend ? ctx.contextNodePath : ctx.routePath}`);
   }
+  if ('redirect' in neosData) {
+    throw new Error(`Redirect found for node at path: ${ctx.routePath}`);
+  }
 
   return neosData.node;
 };
@@ -74,6 +84,9 @@ export const withSiteNode = async (ctx: ContextProps, opts?: DataLoaderOptions) 
     : await loadDocumentPropsCached(ctx.routePath, opts ?? ctx.dataLoaderOptions);
   if (!neosData) {
     throw new Error(`Document node not found: ${ctx.inBackend ? ctx.contextNodePath : ctx.routePath}`);
+  }
+  if ('redirect' in neosData) {
+    throw new Error(`Redirect found for node at path: ${ctx.routePath}`);
   }
 
   return neosData.site;
