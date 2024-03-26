@@ -2,7 +2,7 @@ import log from 'loglevel';
 import { headers as nextHeaders } from 'next/headers';
 import { cache } from 'react';
 
-import { ApiErrors, DataLoaderOptions, NeosData, OptionalOption, SiteData } from '../../types';
+import { ApiErrors, DataLoaderOptions, DocumentResult, NeosData, OptionalOption, SiteData } from '../../types';
 import ApiError from './ApiError';
 
 log.setDefaultLevel(log.levels.DEBUG);
@@ -44,7 +44,7 @@ export const loadDocumentProps = async (
     return undefined;
   }
 
-  const data: NeosData = await parseResponse(fetchUrl, response);
+  const data: DocumentResult = await parseResponse(fetchUrl, response);
   const endTime = Date.now();
   log.debug('fetched data from content API for path', path, ', took', `${endTime - startTime}ms`);
 

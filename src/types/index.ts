@@ -6,11 +6,20 @@ declare global {
   }
 }
 
+export type DocumentResult = NeosData | RedirectData;
+
 export interface NeosData {
   node: NeosContentNode;
   site: NeosNode;
   meta: any;
   backend?: BackendProps;
+}
+
+export interface RedirectData {
+  redirect: {
+    targetPath: string;
+    statusCode: number;
+  };
 }
 
 export type SiteData = {
