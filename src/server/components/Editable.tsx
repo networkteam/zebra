@@ -1,20 +1,29 @@
-import { useEditPreviewMode, useInBackend, useNode } from '../../utils/hooks';
+import { ContextProps } from '../../types';
+import { withEditPreviewMode, withNode } from '../utils/hooks';
 
 type EditableProps = {
+  ctx: ContextProps;
   as?: keyof JSX.IntrinsicElements;
   property: string;
   [x: string]: any;
 };
 
-export default function Editable({ as = 'div', property, ...rest }: EditableProps) {
-  const { properties, nodeType, contextPath, backend } = useNode();
-  const inBackend = useInBackend();
-  const editPreviewMode = useEditPreviewMode();
+const Editable = async ({ ctx, as = 'div', property, ...rest }: EditableProps) => {
+  const inBackend = ctx.inBackend;
+
+  const node = await withNode(ctx);
+  const editPreviewMode = await withEditPreviewMode(ctx);
+
+  if (!node) {
+    return null;
+  }
+
+  const { contextPath, nodeType, properties, backend } = node;
   const { className, ...restAttributes } = rest;
   const Component = as;
 
   if (!inBackend || editPreviewMode?.isEdit === false) {
-    return <Component {...rest} dangerouslySetInnerHTML={{ __html: properties[property] }} />;
+    return <Component {...rest} dangerouslySetInnerHTML={{ __html: properties[property] || '' }} />;
   }
 
   return (
@@ -33,4 +42,6 @@ export default function Editable({ as = 'div', property, ...rest }: EditableProp
       {...restAttributes}
     />
   );
-}
+};
+
+export default Editable;

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 
 import NeosContext from '../../utils/context';
 import { useContentCollection } from '../../utils/hooks';
@@ -6,7 +6,13 @@ import ChildNodes from './ChildNodes';
 
 type ContentCollectionProviderProps = {
   nodeName: string;
-  children: ({ collectionProps, children }: { collectionProps: {}; children: React.ReactNode }) => React.ReactNode;
+  children: ({
+    collectionProps,
+    children,
+  }: {
+    collectionProps: Record<string, string | boolean | undefined>;
+    children: ReactNode;
+  }) => ReactNode;
 };
 
 export default function ContentCollectionProvider({ nodeName, children }: ContentCollectionProviderProps) {
@@ -19,7 +25,10 @@ export default function ContentCollectionProvider({ nodeName, children }: Conten
 
   return (
     <NeosContext.Provider value={{ ...neosContext, node: collectionNode }}>
-      {children({ collectionProps, children: <ChildNodes /> })}
+      {children({
+        collectionProps,
+        children: <ChildNodes />,
+      })}
     </NeosContext.Provider>
   );
 }

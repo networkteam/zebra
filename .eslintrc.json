@@ -1,7 +1,9 @@
 {
-  "plugins": ["simple-import-sort"],
-  "extends": ["plugin:prettier/recommended"],
+  "extends": ["plugin:prettier/recommended", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["simple-import-sort", "@typescript-eslint"],
   "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
     "react/no-unescaped-entities": "off",
     "simple-import-sort/imports": "warn",
     "simple-import-sort/exports": "warn",

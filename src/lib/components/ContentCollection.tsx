@@ -1,7 +1,5 @@
-import classNames from 'classnames';
 import { useContext } from 'react';
 
-import { NeosContentNode } from '../../types';
 import NeosContext from '../../utils/context';
 import { useContentCollection, useInBackend } from '../../utils/hooks';
 import ChildNodes from './ChildNodes';
@@ -27,9 +25,7 @@ export default function ContentCollection({ as = 'div', nodeName, ...rest }: Con
   return (
     <NeosContext.Provider value={{ ...neosContext, node: collectionNode }}>
       <Component
-        className={classNames(className, {
-          'neos-contentcollection': inBackend,
-        })}
+        className={[inBackend ? 'neos-contentcollection' : '', className].join(' ')}
         {...collectionProps}
         {...restAttributes}
       >

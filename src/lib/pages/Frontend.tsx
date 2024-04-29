@@ -1,4 +1,4 @@
-import { NeosNodeTypes, NeosData } from '../../types';
+import { NeosData, NeosNodeTypes } from '../../types';
 import NeosContext from '../../utils/context';
 import ContentRegistry from '../components/ContentRegistry';
 

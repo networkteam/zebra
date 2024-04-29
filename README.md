@@ -1,57 +1,74 @@
-[![npm version](https://badge.fury.io/js/@networkteam%2Fzebra.svg)](https://badge.fury.io/js/@networkteam%2Fzebra)
-# @networkteam/zebra
+<!--lint disable awesome-heading awesome-github awesome-toc double-link -->
 
-🦓
+<p align="center">
+  <br>
+  <img width="400" src="./docs/zebra_logo_dark.svg" alt="logo of zebra">
+  <br>
+  <br>
+</p>
+
+<h2 align='center'>@networkteam/zebra</h2>
+
+<p align='center'>
+A package for Next.js to use Neos CMS as a headless CMS with <b>full visual editing</b>.<br>
+<br><br>
+
+<a href='https://badge.fury.io/js/@networkteam%2Fzebra'>
+<img src='https://badge.fury.io/js/@networkteam%2Fzebra.svg' alt='NPM version'>
+</a>
+</p>
+
+<!--lint ignore-->
 
 ## Why?
 
-* Neos is a great CMS with flexible content structures and focus on a streamlined editing experience
-* Next.js offers a great developer experience and a way to build modern websites and applications with a mixed form of static and dynamic pages
-
-So why not combine the best of both worlds?
-
-Our question was: Can we retain the editing experience of Neos while using Next.js for the frontend? And the answer is: Yes, we can!
+* Neos is a great CMS with flexible content structures and focus on a streamlined, visual editing experience.
+* Next.js offers a great developer experience and a full-stack framework to build modern websites and applications.
 
 ## Features
 
-* No frontend rendering in Neos CMS - it's used headless, besides providing the Neos UI
-* Use React components for rendering the frontend based on content (node properties) from Neos - your own components with a few helpers and hooks for editing
+* Supports Next.js >= 12.2 with app or pages router
+* Full support for content rendering via React server components (RSC)
+* Provides components and helpers to load and render content from Neos CMS via React components
 * Full editing and preview capabilities in the Neos UI using the frontend generated via Next.js
 * Use multi-language sites with Neos and Next.js
 * Supports multi-site setups (single Neos with sites, multiple Next.js instances)
+* App code and content can be mixed
 
 ## How does it work?
 
-This package is used inside a Next.js project that fetches content from Neos CMS for rendering and offers editing with full preview capabilities. It provides components and hooks to handle the rendering of nodes and adding editing metadata for the Neos UI.
+This package is used inside a Next.js project that fetches content from Neos CMS for rendering and offers editing with full preview capabilities. It provides components and helpers to handle the loading and rendering of nodes. It adds the necessary editing metadata for the Neos UI to work as in a traditional Neos setup.
 
 Inside Neos CMS a few supporting packages are used to provide the content via an API for Next.js and adjust the behavior of the Neos UI:
 
 * [Networkteam.Neos.ContentApi](https://github.com/networkteam/Networkteam.Neos.ContentApi) for providing the content via a JSON API.
 * [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) for integrating Next.js as a preview of nodes and handle revalidation of changed documents on publishing.
 
-We also published some supporting tools:
-
-* [github.com/networkteam/grazer](https://github.com/networkteam/grazer) is an HTTP service implementing a specialized priority queue to revalidate pages for changed documents reliably.
-
 ## Installation
+
+> Note: this readme focuses on using Zebra with the Next.js app router, as it is a more flexible approach for data-loading and supports React server components.
 
 * Create or use an existing Next.js project
 * Add `@networkteam/zebra` to your project
-* Apply `withZebra` to your `next.config.mjs`:
+* Apply `withZebra` to your `next.config.js`:
   ```js
-  import { withZebra } from '@networkteam/zebra';
+  /** @type {import('next').NextConfig} */
 
-  export default withZebra({
-    // your next config
-  });
+  const { withZebra } = require('@networkteam/zebra');
+
+  const nextConfig = {
+    reactStrictMode: true,
+    // ...
+  };
+
+  module.exports = withZebra(nextConfig);
   ```
 * Create a few pages and an API route for revalidation:
-  * [`pages/[[...slug]].tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/[[...slug]].tsx)
-  * [`pages/neos/preview.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/neos/preview.tsx)
-  * [`pages/neos/previewNode.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/neos/previewNode.tsx)
-  * [`pages/api/revalidate.ts`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/api/revalidate.ts)
-* Configure a custom document or add `<BackendContainer />` to your existing [`pages/_document.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/pages/_document.tsx)
-* Set the environment variable `NEOS_BASE_URL` to your Neos installation
+  * [`app/[[...slug]]/page.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/app/[[...slug]]/page.tsx)
+  * [`app/neos/preview/page.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/app/neos/preview/page.tsx)
+  * [`app/neos/previewNode/page.tsx`](https://github.com/networkteam/zebra-demo/blob/main/next/app/neos/previewNode/page.tsx)
+  * [`app/api/revalidate/route.ts`](https://github.com/networkteam/zebra-demo/blob/main/next/app/api/revalidate/route.ts)
+* Set the environment variable `NEOS_BASE_URL` to your Neos installation and `PUBLIC_BASE_URL` to the public URL of your Next.js site.
 
 ## Further reading
 
@@ -62,6 +79,7 @@ See the **demo project** for a working example:
 And here's a list of articles with more background:
 
 * [Zebra: Full editing with Neos and Next.js](https://networkteam.com/journal/2023/zebra-neos-and-next)
+* [Zebra: A preview of Next.js 13 App Router and React Server Components](https://networkteam.com/journal/2023/zebra-nextjs-app-router-and-server-components)
 
 ## Configuration
 
@@ -70,57 +88,131 @@ And here's a list of articles with more background:
 * `NEOS_BASE_URL`: The base URL of your Neos installation. This could be an internal URL that is not reachable from outside.
 * `PUBLIC_BASE_URL`: The base URL of your Next.js site. This is the URL where your website will be reachable from outside.
 * `REVALIDATE_TOKEN`: A secret token that will be used to validate calls to the revalidate API route.
-* `REVALIDATE_CONCURRENCY`: How many concurrent revalidations should be performed. Defaults to `2`.
 
 ## Rendering content
 
-Zebra provides a `Frontend` component to render a document from Neos.
-You provide a mapping from node types to React components.
-It is good practice to split components in *presentational* (no knowledge about Neos) and *integrational* components (adds Zebra components and hooks for editing capabilities on top of *presentational* components).
+Zebra provides a `NodeRenderer` component to render a node from Neos.
+You provide a mapping from node types to React components via `initNodeTypes` which should be imported in your root layout.
+It is good practice to split components in *presentational* (no knowledge about Neos) and *content* components (adds Zebra components and helpers for editing capabilities on top of *presentational* components).
+
+> Note: as React server components do not support `useContext`, we explicitly pass the `ctx` object to all components that need to access content.
 
 ### Example
 
-Define node type mappings:
+**Define node type mappings (`lib/config/nodeTypes.ts`):**
 
 ```tsx
+import { initNodeTypes } from '@networkteam/zebra/server';
+
 import DocumentPage from '../components/document/Page';
 import ContentHeadline from '../components/content/Headline';
 
-export const nodeTypes = {
+initNodeTypes({
   // Documents
   'MyProject.Site:Document.Page': DocumentPage,
 
   // Content
   'Neos.NodeTypes:Headline': ContentHeadline,
-};
+});
 ```
 
-Component for a basic document page:
+**Create a dynamic route with optional catch-all (`app/[[...slug]]/page.tsx`):**
 
 ```tsx
-import {
-  ContentCollection,
-  ContentComponent,
-  NeosContentNode,
-  NeosContext,
-  useMeta,
-  useSiteNode,
-} from '@networkteam/zebra';
-import { useContext } from 'react';
+import { loadDocumentPropsCached, NodeRenderer } from '@networkteam/zebra/server';
+import { DataLoaderOptions } from '@networkteam/zebra/types';
+import { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
+
+const dataLoaderOptionsFor = (routePath: string): DataLoaderOptions => ({
+  cache: 'force-cache',
+  next: {
+    tags: ['document'],
+  },
+});
+
+// This is for generating metadata
+export async function generateMetadata({
+  params,
+}: {
+  params: {
+    slug: string[];
+  };
+}): Promise<Metadata> {
+  const routePath = params.slug && Array.isArray(params.slug) ? params.slug.join('/') : '/';
+  const neosData = await loadDocumentPropsCached(routePath, dataLoaderOptionsFor(routePath));
+  if (!neosData) {
+    return {};
+  }
+
+  const { node, site, meta } = neosData;
+  const title = meta?.isRootPage ? site.properties.title : `${node.properties.title} – ${site.properties.title}`;
+  return {
+    title,
+  };
+}
+
+// And this will render the page output
+const Page = async ({ params: { slug } }: { params: { slug: string[] } }) => {
+  const routePath = slug && Array.isArray(slug) ? slug.join('/') : '/';
+  const dataLoaderOptions = dataLoaderOptionsFor(routePath);
+  const neosData = await loadDocumentPropsCached(routePath, dataLoaderOptions);
+
+  if (!neosData) {
+    return notFound();
+  }
+
+  // Check for possible redirects
+  if ('redirect' in neosData) {
+    if (neosData.redirect.statusCode === 308 || neosData.redirect.statusCode === 301) {
+      permanentRedirect(neosData.redirect.targetPath);
+    }
+    redirect(neosData.redirect.targetPath);
+  }
+
+  if (neosData?.node.nodeType === 'Neos.Neos:Shortcut') {
+    return redirect(neosData.node.properties.targetUri || '/');
+  }
+
+  return (
+    // Render the node data with NodeRenderer which uses the node type mappings
+    <NodeRenderer
+      ctx={{
+        routePath,
+        currentNodeIdentifier: neosData.node.identifier,
+        documentNodeIdentifier: neosData.node.identifier,
+        dataLoaderOptions,
+      }}
+      node={neosData.node}
+    />
+  );
+};
+
+export default Page;
+```
+
+**Add a component for a basic document page (`lib/components/document/Page.tsx`):**
+
+```tsx
+import { ContextProps } from '@networkteam/zebra';
+import { ContentCollection } from '@networkteam/zebra/server';
 
 import Header from './partials/Header';
 
-const DocumentPage = () => {
-  const meta = useMeta();
+const DocumentPage = ({ ctx }: { ctx: ContextProps }) => {
+  const { mainNavigation } = await withMeta(ctx);
+  const inBackend = ctx.inBackend;
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header
-        mainNavigation={meta?.mainNavigation}
+        ctx={ctx}
+        mainNavigation={mainNavigation}
+        inBackend={inBackend}
       />
 
       <main className="flex grow flex-col justify-between">
-        <ContentCollection className="grow" nodeName="main" />
+        <ContentCollection className="grow" nodeName="main" ctx={ctx} />
       </main>
     </div>
   );
@@ -129,7 +221,7 @@ const DocumentPage = () => {
 export default DocumentPage;
 ```
 
-Presentational component for a headline:
+**Add a presentational component for a headline:**
 
 ```tsx
 import classNames from 'classnames';
@@ -164,19 +256,23 @@ const Headline = ({ children, as: Component = 'h1', size, className }: HeadlineP
 export default Headline;
 ```
 
-Integrational component for a headline:
+**Add a content component for a headline:**
 
 ```tsx
-import { ContentComponent, Editable, useNode } from '@networkteam/zebra';
+import { ContextProps } from '@networkteam/zebra';
+import { ContentComponent, Editable, withNode } from '@networkteam/zebra/server';
+
+import { baseClasses } from '@/lib/utils/baseClasses';
 
 import Headline from '../ui/Headline';
 
-const ContentHeadline = () => {
-  const node = useNode();
+const ContentHeadline = async ({ ctx }: { ctx: ContextProps }) => {
+  const node = await withNode(ctx);
+
   return (
-    <ContentComponent>
+    <ContentComponent ctx={ctx} className={baseClasses(node)}>
       <Headline as={node.properties.hierarchy} size={node.properties.size}>
-        <Editable property="title" />
+        <Editable ctx={ctx} property="title" />
       </Headline>
     </ContentComponent>
   );
@@ -185,18 +281,20 @@ const ContentHeadline = () => {
 export default ContentHeadline;
 ```
 
-### Static site generation
+### Document rendering
 
 <details>
   <summary>This is how the public view of the Next.js site is generated from content in Neos.</summary>
 
-  Your Next.js project defines a [dynamic catch all route](https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes) that will generate pages for document nodes in Neos CMS. The route is defined in `pages/[[...slug]].tsx`.
+  Your Next.js project defines a [dynamic route with an optional catch-all segment](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes#optional-catch-all-segments) that will render the page for a document node in Neos CMS. The route is defined in `app/[[...slug]]/page.tsx`.
 
-  Next.js will fetch a list of all document nodes from Neos via the Content API in `getStaticProps` for the `[[...slug]]` route.
+  Next.js will fetch the node data for a document node from Neos via the Content API in `loadDocumentPropsCached`. You can implement custom processing based on the loaded data, e.g. to fetch additional data, handle shortcuts and redirects or to handle errors.
 
-  The `getStaticProps` function will then be called for each page with the `path` and `locale` as params.
-  The data for the page will be fetched via the Content API in Neos by the path and locale.
-  This data is the input for rendering the page, so the response of the Content API needs to contain all needed information like menu items, shared content in e.g. a footer and the content of the page itself.
+  Using the `NodeRenderer` a new `ctx` prop is passed with information about the current document / node identifier and route path as well as the data loader options for subsequent requests. This will be passed on to all React server components render content. The identifier will be changed while iterating over individual nodes (e.g. content collections).
+
+  This data is the input for rendering the page, so the response of the Content API needs to contain needed information like menu items, shared content in e.g. a footer and the content of the page itself. With React server components you could also fetch additional data in the component itself.
+
+  Next.js takes care of deduplicating identical fetch requests, so each component in the render tree can fetch data independently without causing additional requests.
 
   For this to work, the Neos base URL has to be known to Next.js via the `NEOS_BASE_URL` environment variable.
 </details>
@@ -210,26 +308,37 @@ export default ContentHeadline;
 
   You always access Neos CMS via your Next.js site by appending `/neos`, as usual.
   The `withZebra` config helper adds the necessary rewrites to the Next.js configuration in `next.config.js` to make this work.
-  Next.js serves a custom `/neos/preview` route that is used to render the preview of a workspace version of a document node.
-  It forwards your Neos session cookie to the Neos backend and fetches the content via the Content API - now with access to the user workspace and much more metadata for use in Neos UI.
+  Next.js serves a custom `/neos/preview` route that is used to render the preview of a document node in the user workspace.
+  It forwards your Neos session cookie to the Neos backend and fetches the content via the Content API - now with access to the user workspace and more metadata for use in Neos UI.
 
-  This is not done statically - as it would not allow to access the current request and user session - but on demand via `getServerSideProps`.
-
-  By using the Zebra components and hooks for rendering, all the metadata for the Neos UI is added to the page. Inline editing should just work.
+  By using the Zebra components and helpers for rendering, all the metadata for the Neos UI is added to the page. Inline editing should just work.
 
   All other requests to `/neos/*` (except `/neos/previewNode`) are proxied to the Neos backend.
 </details>
 
-### Revalidation
+### Caching and revalidation
 
 <details>
-  <summary>This is how incremental static regeneration (ISR) is used if content changes are published in Neos.</summary>
+  <summary>This is how on-demand revalidation is used if content changes are published in Neos.</summary>
 
-  This is done by the [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) package in Neos. It hooks into the publishing signals, collects changed nodes and their closest document nodes and triggers a revalidation of the pages via a Next.js API route (defaults to `/api/revalidate`). A revalidate token is used to prevent unauthorized revalidation requests.
+  Content can be cached by specifying the data loader options in `loadPreviewDocumentProps`:
+
+  ```typescript
+  const dataLoaderOptionsFor = (routePath: string): DataLoaderOptions => ({
+    cache: 'force-cache',
+    next: {
+      tags: ['document'],
+    },
+  });
+
+  const neosData = await loadDocumentPropsCached(routePath, dataLoaderOptions);
+  ```
+
+  It requires the [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) package in Neos. It hooks into the publishing signals, collects changed nodes and their closest document nodes and triggers a revalidation of the routes via a Next.js route handler (defaults to `/api/revalidate`). A revalidate token is used to prevent unauthorized revalidation requests.
 
   Note: For this to work, the Next.js base URL has to be known inside Neos.
 
-  Since content often depends on other documents (e.g. document titles in navigation, teaser cards, etc.), it is advised to implement a _full revalidation_ after every change. This is why we developed [grazer](https://github.com/networkteam/grazer): it receives revalidate requests from Neos at `/api/revalidate` and handles revalidation requests of all other documents to Next.js in the background. It uses a priority queue that prioritizes older and explicit revalidate route paths before other route paths that are revalidated for consistency.
+  Since content often depends on other documents (e.g. document titles in navigation, teaser cards, etc.), it is advised to implement a _full revalidation_ after every change. With the app router, this will only mark routes as invalidated and they will be freshly rendered on the next request.
 
   Note: This approach works reasonably well and solves a lot of complexity with dependencies and figuring out an _exact_ set of document to revalidate.
 </details>
@@ -266,20 +375,22 @@ There are multiple things to consider:
 
 * The Next.js frontend needs to be built and packaged:
   * If static pages are pre-built, the Neos CMS deployment has to be finished before the Next.js frontend can be built.
-  * Another, simpler approach is, to not generate static content here and use an env variable like `CI` to control if static paths / props are fetched from Neos. It works well with `fallback: 'blocking'`, since that will request static props on demand if not yet cached. Bundled with [grazer](https://github.com/networkteam/grazer) an initial revalidation can be performed that will cache all static pages _after Neos and Next are deployed_.
-* Next.js needs to be accessible via a public URL, but requests to Neos should also use this URL to generate correct absolute links and resolve sites.
-  Neos must be accessible form Next.js via another URL - which also could be purely internal (e.g. a Kubernetes Service).
-  This is why `PUBLIC_BASE_URL` is provided to the Next.js frontend, which will set `X-Forwarded-*` proxy headers for Neos.
-  Check that your `trustedProxies` configuration in Neos allows this.
+  * Another, simpler approach is, to not generate static content here and use an env variable like `CI` to opt-out of caching (by calling a function like `headers`). This can be used e.g. in `not-found.tsx` which would cause build errors otherwise, see [`not-found.tsx` in Zebra demo](https://github.com/networkteam/zebra-demo/tree/main/next/app/not-found.tsx).
+* Next.js needs to be accessible via a public URL, but requests to Neos should also use this URL to generate correct absolute links and resolve sites:
+  * Neos must be accessible from Next.js via another URL - which could be purely internal (e.g. a Kubernetes Service).
+  * This is why `PUBLIC_BASE_URL` is provided to the Next.js frontend, which will set `X-Forwarded-*` proxy headers for Neos.
+  * Check that your `trustedProxies` configuration in Neos allows this.
 * Some paths should be routed to Neos (`/neos`, `/_Resources`) and others to Next.js (`/neos/preview`, `/`). In Kubernetes this can be solved at the Ingress level.
-
-TODO Write more about deployment of a Neos / Next project
 
 ### Multi-site caveats
 
 * You have to add the publicly used base URL as the primary domain to each site in Neos (via backend module or Flow CLI).
 * Next.js needs to know about the publicly used base URL via the `PUBLIC_BASE_URL` env var to make sure URIs are generated correctly for revalidate calls to the content API in Neos.
 * Your Neos will need to accept proxy headers from Next.js, make sure to allow it in `Neos.Flow.http.trustedProxies` in `Settings.yaml`.
+
+## Pages router
+
+Please have a look at https://github.com/networkteam/zebra/blob/v0.9.0/README.md to see previous instructions for using the pages router.
 
 ## Contributing
 

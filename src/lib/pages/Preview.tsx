@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 
-import { NeosNodeTypes, NeosData } from '../../types';
+import { NeosData, NeosNodeTypes } from '../../types';
+import { injectNeosBackendMetadata } from '../../utils/backendIncludes';
 import NeosContext from '../../utils/context';
-import { injectNeosBackendMetadata } from '../../utils/helper';
+import { useNotifyContentCanvasRouteChanges } from '../../utils/hooks';
 import ContentRegistry from '../components/ContentRegistry';
-import { useNotifyContentCanvasRouteChanges } from '../../utils/helper';
 
 export default function Preview({ meta, site, node, backend }: NeosData, nodeTypes: NeosNodeTypes) {
   const inBackend = true;
