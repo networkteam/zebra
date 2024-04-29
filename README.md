@@ -116,6 +116,81 @@ initNodeTypes({
 });
 ```
 
+**Create a dynamic route with optional catch-all (`app/[[...slug]]/page.tsx`):**
+
+```tsx
+import { loadDocumentPropsCached, NodeRenderer } from '@networkteam/zebra/server';
+import { DataLoaderOptions } from '@networkteam/zebra/types';
+import { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
+
+const dataLoaderOptionsFor = (routePath: string): DataLoaderOptions => ({
+  cache: 'force-cache',
+  next: {
+    tags: ['document'],
+  },
+});
+
+// This is for generating metadata
+export async function generateMetadata({
+  params,
+}: {
+  params: {
+    slug: string[];
+  };
+}): Promise<Metadata> {
+  const routePath = params.slug && Array.isArray(params.slug) ? params.slug.join('/') : '/';
+  const neosData = await loadDocumentPropsCached(routePath, dataLoaderOptionsFor(routePath));
+  if (!neosData) {
+    return {};
+  }
+
+  const { node, site, meta } = neosData;
+  const title = meta?.isRootPage ? site.properties.title : `${node.properties.title} – ${site.properties.title}`;
+  return {
+    title,
+  };
+}
+
+// And this will render the page output
+const Page = async ({ params: { slug } }: { params: { slug: string[] } }) => {
+  const routePath = slug && Array.isArray(slug) ? slug.join('/') : '/';
+  const dataLoaderOptions = dataLoaderOptionsFor(routePath);
+  const neosData = await loadDocumentPropsCached(routePath, dataLoaderOptions);
+
+  if (!neosData) {
+    return notFound();
+  }
+
+  // Check for possible redirects
+  if ('redirect' in neosData) {
+    if (neosData.redirect.statusCode === 308 || neosData.redirect.statusCode === 301) {
+      permanentRedirect(neosData.redirect.targetPath);
+    }
+    redirect(neosData.redirect.targetPath);
+  }
+
+  if (neosData?.node.nodeType === 'Neos.Neos:Shortcut') {
+    return redirect(neosData.node.properties.targetUri || '/');
+  }
+
+  return (
+    // Render the node data with NodeRenderer which uses the node type mappings
+    <NodeRenderer
+      ctx={{
+        routePath,
+        currentNodeIdentifier: neosData.node.identifier,
+        documentNodeIdentifier: neosData.node.identifier,
+        dataLoaderOptions,
+      }}
+      node={neosData.node}
+    />
+  );
+};
+
+export default Page;
+```
+
 **Add a component for a basic document page (`lib/components/document/Page.tsx`):**
 
 ```tsx
