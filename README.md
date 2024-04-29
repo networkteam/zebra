@@ -246,7 +246,20 @@ export default ContentHeadline;
 <details>
   <summary>This is how on-demand revalidation is used if content changes are published in Neos.</summary>
 
-  This is done by the [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) package in Neos. It hooks into the publishing signals, collects changed nodes and their closest document nodes and triggers a revalidation of the routes via a Next.js route handler (defaults to `/api/revalidate`). A revalidate token is used to prevent unauthorized revalidation requests.
+  Content can be cached by specifying the data loader options in `loadPreviewDocumentProps`:
+
+  ```typescript
+  const dataLoaderOptionsFor = (routePath: string): DataLoaderOptions => ({
+    cache: 'force-cache',
+    next: {
+      tags: ['document'],
+    },
+  });
+
+  const neosData = await loadDocumentPropsCached(routePath, dataLoaderOptions);
+  ```
+
+  It requires the [Networkteam.Neos.Next](https://github.com/networkteam/Networkteam.Neos.Next) package in Neos. It hooks into the publishing signals, collects changed nodes and their closest document nodes and triggers a revalidation of the routes via a Next.js route handler (defaults to `/api/revalidate`). A revalidate token is used to prevent unauthorized revalidation requests.
 
   Note: For this to work, the Next.js base URL has to be known inside Neos.
 
@@ -287,14 +300,12 @@ There are multiple things to consider:
 
 * The Next.js frontend needs to be built and packaged:
   * If static pages are pre-built, the Neos CMS deployment has to be finished before the Next.js frontend can be built.
-  * Another, simpler approach is, to not generate static content here and use an env variable like `CI` to control if static paths / props are fetched from Neos. It works well with `fallback: 'blocking'`, since that will request static props on demand if not yet cached. Bundled with [grazer](https://github.com/networkteam/grazer) an initial revalidation can be performed that will cache all static pages _after Neos and Next are deployed_.
-* Next.js needs to be accessible via a public URL, but requests to Neos should also use this URL to generate correct absolute links and resolve sites.
-  Neos must be accessible form Next.js via another URL - which also could be purely internal (e.g. a Kubernetes Service).
-  This is why `PUBLIC_BASE_URL` is provided to the Next.js frontend, which will set `X-Forwarded-*` proxy headers for Neos.
-  Check that your `trustedProxies` configuration in Neos allows this.
+  * Another, simpler approach is, to not generate static content here and use an env variable like `CI` to opt-out of caching (by calling a function like `headers`). This can be used e.g. in `not-found.tsx` which would cause build errors otherwise, see [`not-found.tsx` in Zebra demo](https://github.com/networkteam/zebra-demo/tree/main/next/app/not-found.tsx).
+* Next.js needs to be accessible via a public URL, but requests to Neos should also use this URL to generate correct absolute links and resolve sites:
+  * Neos must be accessible from Next.js via another URL - which could be purely internal (e.g. a Kubernetes Service).
+  * This is why `PUBLIC_BASE_URL` is provided to the Next.js frontend, which will set `X-Forwarded-*` proxy headers for Neos.
+  * Check that your `trustedProxies` configuration in Neos allows this.
 * Some paths should be routed to Neos (`/neos`, `/_Resources`) and others to Next.js (`/neos/preview`, `/`). In Kubernetes this can be solved at the Ingress level.
-
-TODO Write more about deployment of a Neos / Next project
 
 ### Multi-site caveats
 
@@ -304,7 +315,7 @@ TODO Write more about deployment of a Neos / Next project
 
 ## Pages router
 
-Please have a look at https://github.com/networkteam/zebra/blob/v0.9.0/README.md to see instructions for using the pages router.
+Please have a look at https://github.com/networkteam/zebra/blob/v0.9.0/README.md to see previous instructions for using the pages router.
 
 ## Contributing
 
