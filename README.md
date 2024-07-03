@@ -122,7 +122,7 @@ initNodeTypes({
 import { loadDocumentPropsCached, NodeRenderer } from '@networkteam/zebra/server';
 import { DataLoaderOptions } from '@networkteam/zebra/types';
 import { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import { notFound, redirect, permanentRedirect } from 'next/navigation';
 
 const dataLoaderOptionsFor = (routePath: string): DataLoaderOptions => ({
   cache: 'force-cache',
