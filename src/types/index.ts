@@ -152,3 +152,8 @@ export type OptionalOption = {
    */
   optional?: boolean;
 };
+
+export type QueryResult<D, M> = {
+  data: D[];
+  meta: M;
+};
