@@ -1,7 +1,7 @@
 import log from 'loglevel';
 import { headers as nextHeaders } from 'next/headers';
-import { cache } from 'react';
 import { stringify } from 'qs';
+import { cache } from 'react';
 
 import {
   ApiErrors,
@@ -9,6 +9,7 @@ import {
   DocumentResult,
   NeosData,
   OptionalOption,
+  QueryOptions,
   QueryResult,
   SiteData,
 } from '../../types';
@@ -151,7 +152,7 @@ export const loadSiteProps = async <CustomSiteData extends SiteData = SiteData>(
 export const loadQueryResult = async <M, D>(
   queryName: string,
   params: any,
-  opts?: DataLoaderOptions & OptionalOption
+  opts?: DataLoaderOptions & OptionalOption & QueryOptions
 ) => {
   const apiUrl = process.env.NEOS_BASE_URL;
   if (!apiUrl && opts?.optional) {
@@ -162,7 +163,12 @@ export const loadQueryResult = async <M, D>(
   }
 
   const startTime = Date.now();
-  const fetchUrl = apiUrl + '/neos/content-api/query/' + encodeURIComponent(queryName) + '?' + stringify({ params });
+  const queryParams = stringify({
+    params,
+    workspaceName: opts?.workspaceName,
+    dimensions: opts?.dimensions,
+  });
+  const fetchUrl = apiUrl + '/neos/content-api/query/' + encodeURIComponent(queryName) + '?' + queryParams;
 
   log.debug('fetching data from content API from URL', fetchUrl);
 
