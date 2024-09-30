@@ -151,7 +151,7 @@ export const loadSiteProps = async <CustomSiteData extends SiteData = SiteData>(
 
 export const loadQueryResult = async <D, M>(
   queryName: string,
-  params: any,
+  params?: any,
   opts?: DataLoaderOptions & OptionalOption & QueryOptions
 ) => {
   const apiUrl = process.env.NEOS_BASE_URL;
