@@ -149,9 +149,9 @@ export const loadSiteProps = async <CustomSiteData extends SiteData = SiteData>(
   return data;
 };
 
-export const loadQueryResult = async <M, D>(
+export const loadQueryResult = async <D, M>(
   queryName: string,
-  params: any,
+  params?: any,
   opts?: DataLoaderOptions & OptionalOption & QueryOptions
 ) => {
   const apiUrl = process.env.NEOS_BASE_URL;
@@ -184,7 +184,7 @@ export const loadQueryResult = async <M, D>(
     return undefined;
   }
 
-  const data: QueryResult<M, D> = await parseResponse(fetchUrl, response);
+  const data: QueryResult<D, M> = await parseResponse(fetchUrl, response);
   const endTime = Date.now();
   log.debug('fetched data from content API for query', queryName, ', took', `${endTime - startTime}ms`);
 
