@@ -10,6 +10,7 @@ export {
   loadDocumentPropsCached,
   loadPreviewDocumentProps,
   loadPreviewDocumentPropsCached,
+  loadQueryResult,
   loadSiteProps,
 } from './server/utils/dataLoader';
 export { resolveCurrentNode, resolveCurrentNodeRecursive } from './server/utils/helper';

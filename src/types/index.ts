@@ -152,3 +152,19 @@ export type OptionalOption = {
    */
   optional?: boolean;
 };
+
+export type QueryResult<D, M> = {
+  data: D[];
+  meta: M;
+};
+
+export type QueryOptions = {
+  /**
+   * Optional workspace name for the node context in the query.
+   */
+  workspaceName?: string;
+  /**
+   * Optional dimensions for the node context in the query.
+   */
+  dimensions?: Record<string, string[]>;
+};
