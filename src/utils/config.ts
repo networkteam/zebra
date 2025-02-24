@@ -7,6 +7,14 @@ export const withZebra = (nextConfig: NextConfig): NextConfig => {
       const baseUrl = process.env.NEOS_BASE_URL ?? '';
       const neosRewrites = [
         {
+          source: '/neosyoastseo/data/:path*',
+          destination: baseUrl + '/neosyoastseo/data/:path*',
+        },
+        {
+          source: '/neosyoastseo/page/renderPreviewPage',
+          destination: '/neos/preview',
+        },
+        {
           source: '/neos/:path*',
           destination: baseUrl + '/neos/:path*',
         },
