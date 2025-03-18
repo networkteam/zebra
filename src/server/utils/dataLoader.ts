@@ -73,7 +73,7 @@ export const loadPreviewDocumentProps = async (
     throw new Error('Missing NEOS_BASE_URL environment variable');
   }
 
-  const contextPath = searchParams['node[__contextNodePath]'];
+  const contextPath = searchParams['node[__contextNodePath]'] ?? searchParams['node'];
   if (typeof contextPath !== 'string') {
     throw new Error('Missing context path query parameter');
   }
