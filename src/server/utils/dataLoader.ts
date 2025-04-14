@@ -1,5 +1,5 @@
 import log from 'loglevel';
-import { headers as nextHeaders } from 'next/headers';
+import { headers as nextHeaders, type UnsafeUnwrappedHeaders } from 'next/headers';
 import { stringify } from 'qs';
 import { cache } from 'react';
 
@@ -240,7 +240,7 @@ async function handleNotOkResponse(response: Response, fetchUrl: string): Promis
 }
 
 export const buildNeosPreviewHeaders = () => {
-  const _headers = nextHeaders();
+  const _headers = (nextHeaders() as unknown as UnsafeUnwrappedHeaders);
 
   const headers: HeadersInit = {
     // Pass the cookie to headless API to forward the Neos session
