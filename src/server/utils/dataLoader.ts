@@ -1,5 +1,6 @@
 import log from 'loglevel';
-import { headers as nextHeaders, type UnsafeUnwrappedHeaders } from 'next/headers';
+import { headers as nextHeaders } from 'next/headers';
+import { UnsafeUnwrappedHeaders } from '../../index';
 import { stringify } from 'qs';
 import { cache } from 'react';
 
