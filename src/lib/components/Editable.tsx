@@ -1,5 +1,7 @@
 import { useEditPreviewMode, useInBackend, useNode } from '../../utils/hooks';
 
+import type { JSX } from "react";
+
 type EditableProps = {
   as?: keyof JSX.IntrinsicElements;
   property: string;

@@ -1,6 +1,8 @@
 import { ContextProps } from '../../types';
 import ContentCollectionProvider from './ContentCollectionProvider';
 
+import type { JSX } from "react";
+
 type ContentCollectionProps = {
   ctx: ContextProps;
   as?: keyof JSX.IntrinsicElements;
