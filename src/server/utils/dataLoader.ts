@@ -1,6 +1,5 @@
 import log from 'loglevel';
 import { headers as nextHeaders } from 'next/headers';
-import { UnsafeUnwrappedHeaders } from '../../index';
 import { stringify } from 'qs';
 import { cache } from 'react';
 
@@ -82,7 +81,7 @@ export const loadPreviewDocumentProps = async (
   const startTime = Date.now();
   const fetchUrl = apiUrl + '/neos/content-api/document?contextPath=' + encodeURIComponent(contextPath);
   const response = await fetch(fetchUrl, {
-    headers: buildNeosPreviewHeaders(),
+    headers: await buildNeosPreviewHeaders(),
     cache: 'no-store',
   });
 
@@ -240,8 +239,8 @@ async function handleNotOkResponse(response: Response, fetchUrl: string): Promis
   throw new ApiError('Content API responded with unexpected error', response.status, fetchUrl, undefined, responseBody);
 }
 
-export const buildNeosPreviewHeaders = () => {
-  const _headers = (nextHeaders() as unknown as UnsafeUnwrappedHeaders);
+export const buildNeosPreviewHeaders = async () => {
+  const _headers = await nextHeaders();
 
   const headers: HeadersInit = {
     // Pass the cookie to headless API to forward the Neos session
@@ -270,7 +269,7 @@ export const buildNeosPreviewHeaders = () => {
     }
   }
   return headers;
-};
+}
 
 const applyProxyHeaders = (headers: Record<string, string>, baseUrl: string) => {
   const publicBaseUrl = new URL(baseUrl);
