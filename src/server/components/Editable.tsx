@@ -1,6 +1,8 @@
 import { ContextProps } from '../../types';
 import { withEditPreviewMode, withNode } from '../utils/hooks';
 
+import type { JSX } from "react";
+
 type EditableProps = {
   ctx: ContextProps;
   as?: keyof JSX.IntrinsicElements;

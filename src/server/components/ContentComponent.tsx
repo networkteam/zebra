@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, type JSX } from 'react';
 
 import { ContextProps } from '../../types';
 import ContentComponentProvider from './ContentComponentProvider';

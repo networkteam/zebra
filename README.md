@@ -135,11 +135,10 @@ const dataLoaderOptionsFor = (routePath: string): DataLoaderOptions => ({
 export async function generateMetadata({
   params,
 }: {
-  params: {
-    slug: string[];
-  };
+  params:  Promise<{ slug?: string | string[]; }>
 }): Promise<Metadata> {
-  const routePath = params.slug && Array.isArray(params.slug) ? params.slug.join('/') : '/';
+  const { slug } = await params;
+  const routePath = slug && Array.isArray(params.slug) ? params.slug.join('/') : '/';
   const neosData = await loadDocumentPropsCached(routePath, dataLoaderOptionsFor(routePath));
   if (!neosData) {
     return {};
@@ -153,7 +152,8 @@ export async function generateMetadata({
 }
 
 // And this will render the page output
-const Page = async ({ params: { slug } }: { params: { slug: string[] } }) => {
+const Page = async ({ params }: { params: Promise<{ slug: string[] }> }) => {
+  const { slug } = await params;
   const routePath = slug && Array.isArray(slug) ? slug.join('/') : '/';
   const dataLoaderOptions = dataLoaderOptionsFor(routePath);
   const neosData = await loadDocumentPropsCached(routePath, dataLoaderOptions);

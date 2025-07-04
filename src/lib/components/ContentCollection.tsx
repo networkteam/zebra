@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, type JSX } from 'react';
 
 import NeosContext from '../../utils/context';
 import { useContentCollection, useInBackend } from '../../utils/hooks';
