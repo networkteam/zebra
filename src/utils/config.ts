@@ -37,7 +37,11 @@ export const withZebra = (nextConfig: NextConfig): NextConfig => {
         return rewrites.concat(neosRewrites);
       }
 
-      rewrites.afterFiles = rewrites.afterFiles.concat(neosRewrites);
+      if (Array.isArray(rewrites.afterFiles)) {
+        rewrites.afterFiles = rewrites.afterFiles?.concat(neosRewrites);
+      } else {
+        rewrites.afterFiles = neosRewrites;
+      }
       return rewrites;
     },
   };
