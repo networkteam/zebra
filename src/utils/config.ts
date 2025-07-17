@@ -11,10 +11,6 @@ export const withZebra = (nextConfig: NextConfig): NextConfig => {
           destination: baseUrl + '/neosyoastseo/data/:path*',
         },
         {
-          source: '/neosyoastseo/page/renderPreviewPage',
-          destination: '/neos/preview',
-        },
-        {
           source: '/neos/:path*',
           destination: baseUrl + '/neos/:path*',
         },
