@@ -1,19 +1,46 @@
 name: Release
 on:
   release:
-    types: [created]
+    types: [released]
+  push:
+    branches:
+      - next
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'released'
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '24.x'
           cache: yarn
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
       - run: yarn build
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release-next:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/next'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: yarn
+          registry-url: 'https://registry.npmjs.org'
+      - name: Set outputs
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - run: git config --global user.name "GitHub CD bot"
+      - run: git config --global user.email "info@networkteam.com"
+      - run: npm version prerelease --preid=${{ steps.vars.outputs.sha_short }}
+      - run: yarn install
+      - run: yarn build
+      - run: npm publish --tag next
