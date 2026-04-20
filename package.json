@@ -29,6 +29,7 @@
   "dependencies": {
     "@babel/runtime": "^7.20.13",
     "@supercharge/promise-pool": "^2.3.2",
+    "babel-plugin-react-compiler": "^1.0.0",
     "loglevel": "^1.8.0",
     "qs": "^6.12.1"
   },
@@ -46,7 +47,6 @@
     "@types/react-dom": "^18.2.0",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
-    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
