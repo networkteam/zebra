@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'released'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '24.x'
           cache: yarn
@@ -29,15 +29,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/next'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '24.x'
           cache: yarn
           registry-url: 'https://registry.npmjs.org'
       - name: Set outputs
         id: vars
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - run: git config --global user.name "GitHub CD bot"
       - run: git config --global user.email "info@networkteam.com"
       - run: npm version prerelease --preid=${{ steps.vars.outputs.sha_short }}
