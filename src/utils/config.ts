@@ -3,6 +3,7 @@ import { NextConfig } from 'next';
 export const withZebra = (nextConfig: NextConfig): NextConfig => {
   return {
     ...nextConfig,
+    reactCompiler: nextConfig.reactCompiler ?? true,
     rewrites: async () => {
       const baseUrl = process.env.NEOS_BASE_URL ?? '';
       const neosRewrites = [
