@@ -16,7 +16,8 @@
   "exports": {
     ".": "./index.js",
     "./server": "./server.js",
-    "./client": "./client.js"
+    "./client": "./client.js",
+    "./types": "./types/index.js"
   },
   "scripts": {
     "build": "yarn clean && yarn tsc --project tsconfig.json && yarn babel --config-file ./config/babel.config.js src --out-dir . --extensions \".tsx,.ts,.js,.jsx\"",
