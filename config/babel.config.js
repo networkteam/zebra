@@ -18,7 +18,7 @@ module.exports = (api) => {
 
   return {
     presets: [
-      ['@babel/preset-env', { targets: { node: 12 } }],
+      ['@babel/preset-env', { targets: { node: '20.9' } }],
       ['@babel/preset-react', { runtime: 'automatic' }],
       ['@babel/preset-typescript', { isTSX: true, allExtensions: true }],
     ],
